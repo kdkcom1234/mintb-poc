@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "752775499822",
+    "project_id": "mintb-poc",
+    "storage_bucket": "mintb-poc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752775499822:android:8ad0903e3fb4295f768fbf",
+        "android_client_info": {
+          "package_name": "com.example.mintb_poc_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752775499822-sr4a3tpbfprvkmgu67c5ir55i58s5c7b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mintb_poc_app",
+            "certificate_hash": "3a69e4e495cc8cb76cc0583fef7dd17d9613a32b"
+          }
+        },
+        {
+          "client_id": "752775499822-ikk56vea4muv9fp1c1n5jnp6so9l5caa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBojLfXJ96jwDuq1GFQBS3WX4r0iS5Xw08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752775499822-ikk56vea4muv9fp1c1n5jnp6so9l5caa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "752775499822-lvdc25ad1bho5nhk0ced6gr6a25fi86b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mintbPocApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
