@@ -28,7 +28,6 @@ class _TodoLoginState extends State<TodoLogin> {
                       child: Image(
                         image: AssetImage('assets/logo_login.png'),
                         width: 217.21,
-                        height: 60,
                       ),
                     )
                   ],
