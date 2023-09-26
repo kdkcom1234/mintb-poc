@@ -96,7 +96,7 @@ flutter:
   fonts:
     - family: Pretendard
       fonts:
-        - asset: fonts/Pretendard-SemiBold.otf
+        - asset: fonts/Pretendard-Regular.otf
   assets:
     - assets/logo_login.png
 
