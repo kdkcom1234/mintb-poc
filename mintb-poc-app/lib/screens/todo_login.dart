@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../firebase/auth.dart';
-
 class TodoLogin extends StatefulWidget {
   const TodoLogin({super.key});
 
@@ -17,38 +15,44 @@ class _TodoLoginState extends State<TodoLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              loginProcessing
-                  ? const CircularProgressIndicator()
-                  : InkWell(
-                      onTap: () {
-                        setState(() {
-                          loginProcessing = true;
-                        });
-                        signInWithGoogle(context).then((value) {
-                          Navigator.of(context).pushReplacementNamed("/");
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        child: const Text("Sign in with Google"),
+        body: Container(
+            decoration: const BoxDecoration(color: Color(0xFF1C1C26)),
+            child: const SafeArea(
+                child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 220),
+                      child: Image(
+                        image: AssetImage('assets/logo_login.png'),
+                        width: 217.21,
+                        height: 60,
                       ),
                     )
-            ],
-          )
-        ],
-      ),
-    );
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 22),
+                      child: Text(
+                        '“ We are MEANT TO BE ”',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFFFBBC05),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ))));
   }
 }

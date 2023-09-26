@@ -92,3 +92,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: fonts/Pretendard-SemiBold.otf
+  assets:
+    - assets/logo_login.png
+
