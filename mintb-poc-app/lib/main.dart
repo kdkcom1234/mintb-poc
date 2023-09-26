@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/sign_in.dart';
 import 'package:mintb_poc_app/screens/todo_detail.dart';
 import 'package:mintb_poc_app/screens/todo_form.dart';
 import 'package:mintb_poc_app/screens/todo_list.dart';
-import 'package:mintb_poc_app/screens/todo_login.dart';
 
 import 'firebase/auth.dart';
 import 'firebase_options.dart';
@@ -47,10 +47,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: getUid() == "" ? "/login" : "/",
+      initialRoute: getUid() == "" ? "/sign-in" : "/",
       routes: {
         '/': (context) => const TodoList(),
-        '/login': (context) => const TodoLogin(),
+        '/sign-in': (context) => const SignIn(),
         "/form": (context) => const TodoForm(),
         "/detail": (context) => const TodoDetail()
       },

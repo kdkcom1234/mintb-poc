@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class TodoLogin extends StatefulWidget {
-  const TodoLogin({super.key});
+class SignIn extends StatefulWidget {
+  const SignIn({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _TodoLoginState();
+    return _SignInState();
   }
 }
 
-class _TodoLoginState extends State<TodoLogin> {
+class _SignInState extends State<SignIn> {
   var loginProcessing = false;
 
   @override
