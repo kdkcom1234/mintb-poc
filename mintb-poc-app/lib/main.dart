@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/screens/sign_in.dart';
-import 'package:mintb_poc_app/screens/todo_detail.dart';
-import 'package:mintb_poc_app/screens/todo_form.dart';
 import 'package:mintb_poc_app/screens/todo_list.dart';
+import 'package:mintb_poc_app/screens/welcome_privacy.dart';
 
 import 'firebase/auth.dart';
 import 'firebase_options.dart';
@@ -45,13 +44,15 @@ class MyApp extends StatelessWidget {
       title: 'MintB POC App',
       theme: ThemeData(
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF25ECD7),
+        ),
       ),
       initialRoute: getUid() == "" ? "/sign-in" : "/",
       routes: {
         '/': (context) => const TodoList(),
         '/sign-in': (context) => const SignIn(),
-        "/form": (context) => const TodoForm(),
-        "/detail": (context) => const TodoDetail()
+        '/welcome-privacy': (context) => const WelcomePrivacy()
       },
     );
   }

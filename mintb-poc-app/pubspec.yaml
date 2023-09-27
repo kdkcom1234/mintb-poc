@@ -97,6 +97,9 @@ flutter:
     - family: Pretendard
       fonts:
         - asset: fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: fonts/Pretendard-Bold.otf
+          weight: 700
   assets:
-    - assets/logo_login.png
+    - assets/
 
