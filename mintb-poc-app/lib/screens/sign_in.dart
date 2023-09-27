@@ -53,11 +53,11 @@ class _SignInState extends State<SignIn> {
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                           backgroundColor: const Color(0xFFFBFBFB)),
-                      onPressed:  () async {
+                      onPressed: () async {
                         final result = await signInWithGoogle(context);
-                        if(result.user != null) {
-                          Navigator.of(context)
-                              .pushNamed("/welcome-privacy");
+                        if (result.user != null) {
+                          if (!mounted) return;
+                          Navigator.of(context).pushNamed("/welcome-privacy");
                         }
                       },
                       child: const Row(
