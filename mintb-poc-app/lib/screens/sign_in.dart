@@ -47,49 +47,62 @@ class _SignInState extends State<SignIn> {
                     )
                   ],
                 ),
+                Expanded(
+                    child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFBFBFB),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          onPressed: () async {
+                            final result = await signInWithGoogle(context);
+                            if (result.user != null) {
+                              if (!mounted) return;
+                              Navigator.of(context)
+                                  .pushNamed("/welcome-privacy");
+                            }
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: Image(
+                                  image: AssetImage('assets/google_icon.png'),
+                                  width: 20,
+                                ),
+                              ),
+                              Text(
+                                'Sign in with Google',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                )),
                 Padding(
-                  padding: const EdgeInsets.only(top: 223, left: 16, right: 16),
+                  padding: const EdgeInsets.only(
+                      bottom: 60, top: 20, left: 16, right: 16),
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
-                          backgroundColor: const Color(0xFFFBFBFB)),
-                      onPressed: () async {
-                        final result = await signInWithGoogle(context);
-                        if (result.user != null) {
-                          if (!mounted) return;
-                          Navigator.of(context).pushNamed("/welcome-privacy");
-                        }
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Image(
-                              image: AssetImage('assets/google_icon.png'),
-                              width: 20,
-                            ),
-                          ),
-                          Text(
-                            'Sign in with Google',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          backgroundColor: const Color(0xFFFBFBFB)),
+                          backgroundColor: const Color(0xFFFBFBFB),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
                       onPressed: () {},
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
