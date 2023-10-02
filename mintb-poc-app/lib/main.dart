@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/auth/phone_country.dart';
+import 'package:mintb_poc_app/screens/auth/phone_verfication_code.dart';
 import 'package:mintb_poc_app/screens/auth/phone_verification.dart';
 import 'package:mintb_poc_app/screens/auth/privacy_policy.dart';
 import 'package:mintb_poc_app/screens/auth/sign_in.dart';
@@ -56,7 +58,10 @@ class MyApp extends StatelessWidget {
         '/auth/sign-in': (context) => const SignIn(),
         '/auth/welcome-privacy': (context) => const WelcomePrivacy(),
         '/auth/privacy-policy': (context) => const PrivacyPolicy(),
-        '/auth/phone-verification': (context) => const PhoneVerification()
+        '/auth/phone-verification': (context) => const PhoneVerification(),
+        '/auth/phone-country': (context) => const PhoneCountry(),
+        '/auth/phone-verification-code': (context) =>
+            const PhoneVerificationCode()
       },
     );
   }

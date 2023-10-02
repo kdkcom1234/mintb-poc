@@ -20,7 +20,9 @@ class _SignInState extends State<SignIn> {
             decoration: const BoxDecoration(color: Color(0xFF1C1C26)),
             child: SafeArea(
                 child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                /* -- logo */
                 const Padding(
                   padding: EdgeInsets.only(top: 220),
                   child: Image(
@@ -28,25 +30,22 @@ class _SignInState extends State<SignIn> {
                     width: 217.21,
                   ),
                 ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 22),
-                      child: Text(
-                        '“ We are MEANT TO BE ”',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFFFBBC05),
-                          fontSize: 16,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                        ),
-                      ),
-                    )
-                  ],
+                /* -- title */
+                const Padding(
+                  padding: EdgeInsets.only(top: 22),
+                  child: Text(
+                    '“ We are MEANT TO BE ”',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFFFBBC05),
+                      fontSize: 16,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                    ),
+                  ),
                 ),
+                /* -- google login button */
                 Expanded(
                     child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -94,6 +93,7 @@ class _SignInState extends State<SignIn> {
                     ),
                   ],
                 )),
+                /* -- apple login button */
                 Padding(
                   padding: const EdgeInsets.only(
                       bottom: 60, top: 20, left: 16, right: 16),
