@@ -190,8 +190,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             ),
                             decoration: const InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 17),
+                              contentPadding:
+                                  EdgeInsets.only(left: 15, top: 6, bottom: 16),
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.number,

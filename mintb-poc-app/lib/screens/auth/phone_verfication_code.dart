@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../widgets/back_nav_button.dart';
 
@@ -13,9 +14,16 @@ class PhoneVerificationCode extends StatefulWidget {
 
 class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
   final codes = ["7", "2", "3", "7", "5", "1"];
+  final List<TextEditingController> codeControllers = [];
 
   @override
   Widget build(BuildContext context) {
+    for (final (index, code) in codes.indexed) {
+      final controller = TextEditingController();
+      controller.text = code;
+      codeControllers.add(controller);
+    }
+
     // countryCode, phone
     final Map<String, String> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, String>;
@@ -92,10 +100,31 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
                     width: 40,
                     height: 48,
                     margin: EdgeInsets.only(right: index == 5 ? 0 : 8),
+                    // padding: EdgeInsets.only(top: 24),
                     decoration: ShapeDecoration(
                       color: const Color(0xFF343434),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(2)),
+                    ),
+                    child: TextField(
+                      style: const TextStyle(
+                        color: Color(0xFF3DDFCE),
+                        fontSize: 24,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                      ),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding:
+                            EdgeInsets.only(left: 13, top: 32, bottom: 12),
+                        border: InputBorder.none,
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      controller: codeControllers[index],
                     ),
                   )
               ])
