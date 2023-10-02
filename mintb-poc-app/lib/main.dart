@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/auth/phone_verification.dart';
+import 'package:mintb_poc_app/screens/auth/privacy_policy.dart';
 import 'package:mintb_poc_app/screens/auth/sign_in.dart';
 import 'package:mintb_poc_app/screens/auth/welcome_privacy.dart';
 import 'package:mintb_poc_app/screens/card/card-main.dart';
 
-import 'firebase/auth.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -49,11 +50,13 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // initialRoute: getUid() == "" ? "/auth/sign-in" : "/",
-      initialRoute: getUid() == "" ? "/auth/sign-in" : "/auth/sign-in",
+      initialRoute: "/auth/sign-in",
       routes: {
         '/': (context) => const CardMain(),
         '/auth/sign-in': (context) => const SignIn(),
-        '/auth/welcome-privacy': (context) => const WelcomePrivacy()
+        '/auth/welcome-privacy': (context) => const WelcomePrivacy(),
+        '/auth/privacy-policy': (context) => const PrivacyPolicy(),
+        '/auth/phone-verification': (context) => const PhoneVerification()
       },
     );
   }
