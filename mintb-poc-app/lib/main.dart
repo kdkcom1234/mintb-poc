@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/screens/sign_in.dart';
-import 'package:mintb_poc_app/screens/todo_list.dart';
-import 'package:mintb_poc_app/screens/welcome_privacy.dart';
+import 'package:mintb_poc_app/screens/auth/sign_in.dart';
+import 'package:mintb_poc_app/screens/auth/welcome_privacy.dart';
+import 'package:mintb_poc_app/screens/card/card-main.dart';
 
 import 'firebase/auth.dart';
 import 'firebase_options.dart';
@@ -48,11 +48,12 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF25ECD7),
         ),
       ),
-      initialRoute: getUid() == "" ? "/sign-in" : "/",
+      // initialRoute: getUid() == "" ? "/auth/sign-in" : "/",
+      initialRoute: getUid() == "" ? "/auth/sign-in" : "/auth/sign-in",
       routes: {
-        '/': (context) => const TodoList(),
-        '/sign-in': (context) => const SignIn(),
-        '/welcome-privacy': (context) => const WelcomePrivacy()
+        '/': (context) => const CardMain(),
+        '/auth/sign-in': (context) => const SignIn(),
+        '/auth/welcome-privacy': (context) => const WelcomePrivacy()
       },
     );
   }

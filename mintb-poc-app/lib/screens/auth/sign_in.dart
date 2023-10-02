@@ -65,7 +65,7 @@ class _SignInState extends State<SignIn> {
                             if (result.user != null) {
                               if (!mounted) return;
                               Navigator.of(context)
-                                  .pushNamed("/welcome-privacy");
+                                  .pushNamed("/auth/welcome-privacy");
                             }
                           },
                           child: const Row(
