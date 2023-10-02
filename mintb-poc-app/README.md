@@ -17,3 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 ### build - release android apk
 flutter build apk --release --target-platform=android-arm64 
+cp -rf build/app/outputs/apk/release/app-release.apk app-release.apk
