@@ -18,9 +18,12 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   var countryCode = "+82";
 
   @override
-  Widget build(BuildContext context) {
-    phoneTextController.text = "1033559944";
+  void initState() {
+    // phoneTextController.text = "1033559944";
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
           decoration: const BoxDecoration(color: Color(0xFF1C1C26)),

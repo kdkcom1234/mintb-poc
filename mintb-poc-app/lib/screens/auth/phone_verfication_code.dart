@@ -15,15 +15,21 @@ class PhoneVerificationCode extends StatefulWidget {
 class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
   final codes = ["7", "2", "3", "7", "5", "1"];
   final List<TextEditingController> codeControllers = [];
+  final List<FocusNode> codeFocusNodes = [];
+
+  @override
+  void initState() {
+    for (final (index, code) in codes.indexed) {
+      final controller = TextEditingController();
+      final focusNode = FocusNode();
+      // controller.text = code;
+      codeControllers.add(controller);
+      codeFocusNodes.add(focusNode);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    for (final (index, code) in codes.indexed) {
-      final controller = TextEditingController();
-      controller.text = code;
-      codeControllers.add(controller);
-    }
-
     // countryCode, phone
     final Map<String, String> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, String>;
@@ -125,9 +131,66 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
                         FilteringTextInputFormatter.digitsOnly
                       ],
                       controller: codeControllers[index],
+                      focusNode: codeFocusNodes[index],
+                      onChanged: (text) {
+                        if (text.isNotEmpty && index < codes.length - 1) {
+                          codeFocusNodes[index + 1].requestFocus();
+                        }
+                      },
                     ),
                   )
               ])
+              /* -- notice */
+              ,
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 24, right: 16),
+                    child: Text(
+                      '인증코드를 받지 못했나요?',
+                      style: TextStyle(
+                        color: Color(0xFF949494),
+                        fontSize: 16,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Color(0xFF949494),
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(right: 16, bottom: 16),
+                    width: 100,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          backgroundColor: const Color(0xFF25ECD7),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      onPressed: () {},
+                      child: const Text(
+                        '다음',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF343434),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ))
             ]))));
   }
 }
