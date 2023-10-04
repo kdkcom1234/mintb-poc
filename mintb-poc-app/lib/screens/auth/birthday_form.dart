@@ -20,6 +20,13 @@ class _BirthdayFormState extends State<BirthdayForm> {
   final FocusNode dayFocus = FocusNode();
 
   @override
+  void initState() {
+    yearController.text = "1990";
+    monthController.text = "10";
+    dayController.text = "04";
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
@@ -305,7 +312,10 @@ class _BirthdayFormState extends State<BirthdayForm> {
                               backgroundColor: const Color(0xFF25ECD7),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pushNamed("/auth/gender-form");
+                          },
                           child: const Text(
                             '다음',
                             textAlign: TextAlign.center,
