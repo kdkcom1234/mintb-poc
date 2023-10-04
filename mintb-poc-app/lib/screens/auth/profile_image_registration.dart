@@ -65,50 +65,52 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                             )),
                       ])),
                   /* image tile */
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: 24, left: 16, right: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
+                          padding: const EdgeInsets.only(top: 24),
+                          child: InkWell(
+                            onTap: () {},
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                ProfileImageTile(
-                                  isPrimary: true,
+                                Row(
+                                  children: [
+                                    ProfileImageTile(
+                                      isPrimary: true,
+                                    ),
+                                    SizedBox(width: 16),
+                                    Column(
+                                      children: [
+                                        ProfileImageTile(),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        ProfileImageTile(),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                SizedBox(width: 16),
-                                Column(
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Row(
                                   children: [
                                     ProfileImageTile(),
                                     SizedBox(
-                                      height: 16,
+                                      width: 16,
+                                    ),
+                                    ProfileImageTile(),
+                                    SizedBox(
+                                      width: 16,
                                     ),
                                     ProfileImageTile(),
                                   ],
                                 )
                               ],
                             ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Row(
-                              children: [
-                                ProfileImageTile(),
-                                SizedBox(
-                                  width: 16,
-                                ),
-                                ProfileImageTile(),
-                                SizedBox(
-                                  width: 16,
-                                ),
-                                ProfileImageTile(),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
+                          )),
                     ],
                   ),
 
