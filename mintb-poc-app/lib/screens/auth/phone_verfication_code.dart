@@ -22,7 +22,7 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
     for (final (index, code) in codes.indexed) {
       final controller = TextEditingController();
       final focusNode = FocusNode();
-      // controller.text = code;
+      controller.text = code;
       codeControllers.add(controller);
       codeFocusNodes.add(focusNode);
     }
@@ -176,7 +176,9 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
                           backgroundColor: const Color(0xFF25ECD7),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12))),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pushNamed("/auth/nickname-form");
+                      },
                       child: const Text(
                         '다음',
                         textAlign: TextAlign.center,

@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/auth/birthday_form.dart';
+import 'package:mintb_poc_app/screens/auth/nickname_form.dart';
 import 'package:mintb_poc_app/screens/auth/phone_country.dart';
 import 'package:mintb_poc_app/screens/auth/phone_verfication_code.dart';
 import 'package:mintb_poc_app/screens/auth/phone_verification.dart';
@@ -61,7 +63,9 @@ class MyApp extends StatelessWidget {
         '/auth/phone-verification': (context) => const PhoneVerification(),
         '/auth/phone-country': (context) => const PhoneCountry(),
         '/auth/phone-verification-code': (context) =>
-            const PhoneVerificationCode()
+            const PhoneVerificationCode(),
+        '/auth/nickname-form': (context) => const NicknameForm(),
+        '/auth/birthday-form': (context) => const BirthdayForm()
       },
     );
   }
