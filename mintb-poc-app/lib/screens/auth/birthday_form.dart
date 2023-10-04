@@ -113,6 +113,9 @@ class _BirthdayFormState extends State<BirthdayForm> {
                                   if (text.length == 4) {
                                     monthFocus.requestFocus();
                                   }
+                                  if (text.length > 4) {
+                                    yearController.text = text.substring(0, 4);
+                                  }
                                 },
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
@@ -181,6 +184,9 @@ class _BirthdayFormState extends State<BirthdayForm> {
                                   if (text.length == 2) {
                                     dayFocus.requestFocus();
                                   }
+                                  if (text.length > 2) {
+                                    monthController.text = text.substring(0, 2);
+                                  }
                                 },
                                 focusNode: monthFocus,
                                 textAlign: TextAlign.center,
@@ -246,6 +252,11 @@ class _BirthdayFormState extends State<BirthdayForm> {
                                 ),
                               ),
                               child: TextField(
+                                onChanged: (text) {
+                                  if (text.length > 2) {
+                                    dayController.text = text.substring(0, 2);
+                                  }
+                                },
                                 focusNode: dayFocus,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
@@ -256,18 +267,19 @@ class _BirthdayFormState extends State<BirthdayForm> {
                                   height: 0,
                                 ),
                                 decoration: const InputDecoration(
-                                    isDense: true,
-                                    contentPadding:
-                                        EdgeInsets.only(top: 6, bottom: 13),
-                                    border: InputBorder.none,
-                                    hintText: "DD",
-                                    hintStyle: TextStyle(
-                                      color: Color(0xFF888888),
-                                      fontSize: 16,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0,
-                                    )),
+                                  isDense: true,
+                                  contentPadding:
+                                      EdgeInsets.only(top: 6, bottom: 13),
+                                  border: InputBorder.none,
+                                  hintText: "DD",
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF888888),
+                                    fontSize: 16,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w700,
+                                    height: 0,
+                                  ),
+                                ),
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly
