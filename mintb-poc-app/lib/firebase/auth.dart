@@ -12,7 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 // 프로젝트 안드로이드 앱에 디지털 지문 추가
 // google-service.json 파일을 다시 받고 덮어 씌우기
 
-Future<UserCredential> signInWithGoogle(BuildContext context) async {
+Future<UserCredential?> signInWithGoogle(BuildContext context) async {
   // 개발모드일 때 이메일 인증만 가능
   // if (kDebugMode) {
   //   final userCredential = await FirebaseAuth.instance
@@ -29,6 +29,11 @@ Future<UserCredential> signInWithGoogle(BuildContext context) async {
   // Obtain the auth details from the request
   final GoogleSignInAuthentication? googleAuth =
       await googleUser?.authentication;
+
+  // 로그인을 취소했거나 토큰을 얻지 못했으면
+  if (googleAuth?.accessToken == null) {
+    return null;
+  }
 
   // Create a new credential
   final credential = GoogleAuthProvider.credential(

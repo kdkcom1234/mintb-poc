@@ -60,35 +60,52 @@ class _SignInState extends State<SignIn> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
                           onPressed: () async {
+                            setState(() {
+                              loginProcessing = true;
+                            });
+
                             final result = await signInWithGoogle(context);
-                            if (result.user != null) {
+                            if (result?.user != null) {
                               if (!mounted) return;
                               Navigator.of(context)
                                   .pushNamed("/auth/welcome-privacy");
                             }
+
+                            setState(() {
+                              loginProcessing = false;
+                            });
                           },
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10),
-                                child: Image(
-                                  image: AssetImage('assets/google_icon.png'),
-                                  width: 20,
-                                ),
-                              ),
-                              Text(
-                                'Sign in with Google',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                ),
-                              ),
-                            ],
+                            children: loginProcessing
+                                ? [
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 8, bottom: 8),
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  ]
+                                : [
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: Image(
+                                        image: AssetImage(
+                                            'assets/google_icon.png'),
+                                        width: 20,
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Sign in with Google',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0,
+                                      ),
+                                    ),
+                                  ],
                           )),
                     ),
                   ],
