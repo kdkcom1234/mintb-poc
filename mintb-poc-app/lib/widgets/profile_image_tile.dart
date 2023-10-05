@@ -1,8 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 
 class ProfileImageTile extends StatelessWidget {
-  const ProfileImageTile({super.key, this.isPrimary = false});
+  const ProfileImageTile({super.key, this.isPrimary = false, this.file});
   final bool isPrimary;
+  final File? file;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +36,21 @@ class ProfileImageTile extends StatelessWidget {
                 image: const AssetImage("assets/add_icon.png"),
                 width: isPrimary ? 24 : 16,
                 height: isPrimary ? 24 : 16,
-              )
+              ),
             ],
           ),
         ),
+        file != null
+            ? Positioned(
+                top: 0,
+                left: 0,
+                child: Image.file(
+                  file!,
+                  width: isPrimary ? 214 : 100,
+                  height: isPrimary ? 214 : 100,
+                  fit: BoxFit.cover,
+                ))
+            : const SizedBox.shrink(),
         isPrimary
             ? Positioned(
                 left: 13,
@@ -45,7 +59,7 @@ class ProfileImageTile extends StatelessWidget {
                     width: 48,
                     height: 24,
                     decoration: ShapeDecoration(
-                      color: const Color(0xFF343434),
+                      color: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(
                             width: 1, color: Color(0xFF25ECD7)),

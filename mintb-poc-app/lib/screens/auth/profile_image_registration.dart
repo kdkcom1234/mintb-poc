@@ -1,8 +1,11 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/widgets/media_selector.dart';
 import 'package:mintb_poc_app/widgets/profile_image_tile.dart';
 
 import '../../widgets/back_nav_button.dart';
+import '../../widgets/media_selector.dart';
 
 class ProfileImageRegistration extends StatefulWidget {
   const ProfileImageRegistration({super.key});
@@ -14,6 +17,8 @@ class ProfileImageRegistration extends StatefulWidget {
 }
 
 class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
+  final List<File?> selectedImages = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,33 +77,52 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                       Padding(
                           padding: const EdgeInsets.only(top: 24),
                           child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
+                            onTap: () async {
+                              final result = await Navigator.of(context)
+                                  .push(MaterialPageRoute(
                                 builder: (context) => const MediaSelector(),
                                 fullscreenDialog: true,
-                              ));
+                              )) as List<File?>;
+
+                              log(result.toString());
+
+                              setState(() {
+                                selectedImages.clear();
+                                for (final file in result) {
+                                  selectedImages.add(file);
+                                }
+                              });
                             },
-                            child: const Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Row(
                                   children: [
                                     ProfileImageTile(
                                       isPrimary: true,
+                                      file: selectedImages.isNotEmpty
+                                          ? selectedImages[0]
+                                          : null,
                                     ),
-                                    SizedBox(width: 16),
+                                    const SizedBox(width: 16),
                                     Column(
                                       children: [
-                                        ProfileImageTile(),
-                                        SizedBox(
+                                        ProfileImageTile(
+                                            file: selectedImages.length > 1
+                                                ? selectedImages[1]
+                                                : null),
+                                        const SizedBox(
                                           height: 16,
                                         ),
-                                        ProfileImageTile(),
+                                        ProfileImageTile(
+                                            file: selectedImages.length > 2
+                                                ? selectedImages[2]
+                                                : null),
                                       ],
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
                                 Row(

@@ -15,7 +15,7 @@ class MediaSelector extends StatefulWidget {
 
 class _MediaSelectorState extends State<MediaSelector> {
   final List<File?> images = [];
-  final selectedImages = [];
+  final List<int> selectedImageIndexes = [];
   var loading = false;
 
   AssetPathEntity? currentPath;
@@ -137,7 +137,15 @@ class _MediaSelectorState extends State<MediaSelector> {
                               Positioned(
                                   right: 8,
                                   child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      final selectedImages = images
+                                          .where((element) =>
+                                              selectedImageIndexes.contains(
+                                                  images.indexOf(element)))
+                                          .toList();
+
+                                      Navigator.of(context).pop(selectedImages);
+                                    },
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                         minimumSize: const Size(60, 32),
@@ -207,7 +215,7 @@ class _MediaSelectorState extends State<MediaSelector> {
                             ],
                           )),
                       Text(
-                        '${selectedImages.length} / ${widget.maxSelectSize} 선택됨',
+                        '${selectedImageIndexes.length} / ${widget.maxSelectSize} 선택됨',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF3DDFCE),
@@ -236,14 +244,14 @@ class _MediaSelectorState extends State<MediaSelector> {
                           return InkWell(
                               onTap: () {
                                 setState(() {
-                                  if (selectedImages.contains(index)) {
-                                    selectedImages.remove(index);
+                                  if (selectedImageIndexes.contains(index)) {
+                                    selectedImageIndexes.remove(index);
                                   } else {
-                                    if (selectedImages.length ==
+                                    if (selectedImageIndexes.length ==
                                         widget.maxSelectSize) {
                                       return;
                                     }
-                                    selectedImages.add(index);
+                                    selectedImageIndexes.add(index);
                                   }
                                 });
                               },
@@ -262,10 +270,10 @@ class _MediaSelectorState extends State<MediaSelector> {
                                     decoration: ShapeDecoration(
                                       shape: RoundedRectangleBorder(
                                         side: BorderSide(
-                                            width:
-                                                selectedImages.contains(index)
-                                                    ? 2
-                                                    : 0,
+                                            width: selectedImageIndexes
+                                                    .contains(index)
+                                                ? 2
+                                                : 0,
                                             color: const Color(0xFF25ECD7)),
                                       ),
                                     ),
@@ -274,7 +282,7 @@ class _MediaSelectorState extends State<MediaSelector> {
                                     top: 8,
                                     right: 6,
                                     child: Image.asset(
-                                      selectedImages.contains(index)
+                                      selectedImageIndexes.contains(index)
                                           ? "assets/check_active_transparent.png"
                                           : "assets/check_inactive.png",
                                       width: 20,
