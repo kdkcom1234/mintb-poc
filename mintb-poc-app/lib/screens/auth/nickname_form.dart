@@ -16,6 +16,7 @@ class _NicknameFormState extends State<NicknameForm> {
 
   @override
   void initState() {
+    super.initState();
     nicknameController.text = "닉네임";
   }
 

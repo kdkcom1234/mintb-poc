@@ -14,7 +14,7 @@ class _CardMainState extends State<CardMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Color(0xFF343434)),
+        decoration: const BoxDecoration(color: Color(0xFF343434)),
       ),
     );
   }

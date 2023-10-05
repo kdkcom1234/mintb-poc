@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class MediaSelector extends StatefulWidget {
-  const MediaSelector({super.key});
+  const MediaSelector({super.key, this.maxSelectSize = 5});
+  final int maxSelectSize;
 
   @override
   State<StatefulWidget> createState() {
@@ -10,7 +14,76 @@ class MediaSelector extends StatefulWidget {
 }
 
 class _MediaSelectorState extends State<MediaSelector> {
-  // 0xFF343434
+  final List<File?> images = [];
+  final selectedImages = [];
+  var loading = false;
+
+  AssetPathEntity? currentPath;
+  var currentBlock = 0;
+  var blockSize = 21;
+
+  final ScrollController gridController = ScrollController();
+
+  Future<void> fetchImages() async {
+    final currentPath = this.currentPath;
+
+    if (currentPath != null) {
+      final List<AssetEntity> entities = (await currentPath.getAssetListPaged(
+              page: currentBlock, size: blockSize))
+          .where((e) => e.type == AssetType.image)
+          .toList();
+
+      // log(entities.toString());
+
+      for (final entity in entities) {
+        images.add(await entity.file);
+      }
+
+      // log(images.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    (() async {
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      if (ps.isAuth) {
+        // Granted.
+        final List<AssetPathEntity> paths =
+            await PhotoManager.getAssetPathList();
+        // log(paths.toString());
+
+        final path = paths.firstWhere((e) => e.id == "isAll");
+        currentPath = path;
+        // log(path.toString());
+
+        images.clear();
+        await fetchImages();
+
+        setState(() {
+          loading = false;
+        });
+
+        gridController.addListener(() async {
+          if (gridController.hasClients) {
+            if (gridController.position.maxScrollExtent ==
+                gridController.offset) {
+              await fetchImages();
+              setState(() {
+                currentBlock += 1;
+              });
+            }
+          }
+        });
+      } else {
+        // Limited(iOS) or Rejected, use `==` for more precise judgements.
+        // You can call `PhotoManager.openSetting()` to open settings for further steps.
+      }
+    })();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +173,8 @@ class _MediaSelectorState extends State<MediaSelector> {
                       OutlinedButton(
                           onPressed: () {},
                           style: OutlinedButton.styleFrom(
-                              padding: EdgeInsets.zero,
+                              padding:
+                                  const EdgeInsets.only(left: 12, right: 12),
                               minimumSize: const Size(60, 32),
                               backgroundColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
@@ -108,13 +182,13 @@ class _MediaSelectorState extends State<MediaSelector> {
                               ),
                               side: const BorderSide(
                                   width: 1, color: Color(0xFF3DDFCE))),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '최근 ',
+                                currentPath != null ? currentPath!.name : "",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF3EDFCF),
                                   fontSize: 12,
                                   fontFamily: 'Pretendard',
@@ -122,20 +196,20 @@ class _MediaSelectorState extends State<MediaSelector> {
                                   height: 0,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
-                              Image(
+                              const Image(
                                 image:
                                     AssetImage("assets/down_caret_primary.png"),
                                 width: 10,
                               )
                             ],
                           )),
-                      const Text(
-                        '5 / 5 선택됨',
+                      Text(
+                        '${selectedImages.length} / ${widget.maxSelectSize} 선택됨',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF3DDFCE),
                           fontSize: 12,
                           fontFamily: 'Pretendard',
@@ -148,60 +222,67 @@ class _MediaSelectorState extends State<MediaSelector> {
                 ),
                 /* -- image list */
                 Expanded(
-                    child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color(0xFF343434),
-                  child: Wrap(
-                    children: [
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 2) / 3,
-                        height: (MediaQuery.of(context).size.width - 2) / 3,
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Image(
-                            image: AssetImage("assets/profile_sample.png"),
-                          ),
+                    child: GridView.builder(
+                        controller: gridController,
+                        itemCount: images.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, //1 개의 행에 보여줄 item 개수
+                          childAspectRatio: 1 / 1, //item 의 가로 1, 세로 2 의 비율
+                          mainAxisSpacing: 1, //수평 Padding
+                          crossAxisSpacing: 1, //수직 Padding
                         ),
-                      ),
-                      const SizedBox(
-                        width: 1,
-                      ),
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 2) / 3,
-                        height: (MediaQuery.of(context).size.width - 2) / 3,
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Image(
-                            image: AssetImage("assets/profile_sample.png"),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 1,
-                      ),
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 2) / 3,
-                        height: (MediaQuery.of(context).size.width - 2) / 3,
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Image(
-                            image: AssetImage("assets/profile_sample.png"),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 2) / 3,
-                        height: (MediaQuery.of(context).size.width - 2) / 3,
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Image(
-                            image: AssetImage("assets/profile_sample.png"),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ))
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectedImages.contains(index)) {
+                                    selectedImages.remove(index);
+                                  } else {
+                                    if (selectedImages.length ==
+                                        widget.maxSelectSize) {
+                                      return;
+                                    }
+                                    selectedImages.add(index);
+                                  }
+                                });
+                              },
+                              child: Stack(
+                                children: [
+                                  Image.file(
+                                    images[index]!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                  Positioned(
+                                      child: Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: ShapeDecoration(
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            width:
+                                                selectedImages.contains(index)
+                                                    ? 2
+                                                    : 0,
+                                            color: const Color(0xFF25ECD7)),
+                                      ),
+                                    ),
+                                  )),
+                                  Positioned(
+                                    top: 8,
+                                    right: 6,
+                                    child: Image.asset(
+                                      selectedImages.contains(index)
+                                          ? "assets/check_active_transparent.png"
+                                          : "assets/check_inactive.png",
+                                      width: 20,
+                                    ),
+                                  )
+                                ],
+                              ));
+                        }))
               ],
             ))));
   }

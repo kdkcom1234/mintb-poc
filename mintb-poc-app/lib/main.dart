@@ -13,7 +13,7 @@ import 'package:mintb_poc_app/screens/auth/privacy_policy.dart';
 import 'package:mintb_poc_app/screens/auth/profile_image_registration.dart';
 import 'package:mintb_poc_app/screens/auth/sign_in.dart';
 import 'package:mintb_poc_app/screens/auth/welcome_privacy.dart';
-import 'package:mintb_poc_app/screens/card/card-main.dart';
+import 'package:mintb_poc_app/screens/card/card_main.dart';
 
 import 'firebase_options.dart';
 

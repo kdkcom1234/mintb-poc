@@ -19,7 +19,8 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
 
   @override
   void initState() {
-    for (final (index, code) in codes.indexed) {
+    super.initState();
+    for (final code in codes) {
       final controller = TextEditingController();
       final focusNode = FocusNode();
       controller.text = code;
@@ -101,7 +102,7 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
               ),
               /* -- code field */
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                for (final (index, item) in codes.indexed)
+                for (final (index, _) in codes.indexed)
                   Container(
                     width: 40,
                     height: 48,

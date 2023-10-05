@@ -62,8 +62,7 @@ class _TodoListState extends State<TodoList> {
                     ),
                   ),
                   onTap: () async {
-                    final result = await Navigator.of(context)
-                        .pushNamed("/detail", arguments: {
+                    Navigator.of(context).pushNamed("/detail", arguments: {
                       "memo": todoList[index].memo,
                       "id": todoList[index].id,
                       "index": index

@@ -19,6 +19,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
 
   @override
   void initState() {
+    super.initState();
     phoneTextController.text = "1033559944";
   }
 

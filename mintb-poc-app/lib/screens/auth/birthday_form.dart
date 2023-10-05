@@ -21,6 +21,7 @@ class _BirthdayFormState extends State<BirthdayForm> {
 
   @override
   void initState() {
+    super.initState();
     yearController.text = "1990";
     monthController.text = "10";
     dayController.text = "04";
