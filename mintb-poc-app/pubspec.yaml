@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^4.9.1
   firebase_core: ^2.15.1
   google_sign_in: ^6.1.5
+  photo_manager: ^2.7.1
 
 dev_dependencies:
   flutter_test:
@@ -102,6 +103,8 @@ flutter:
           weight: 500
         - asset: fonts/Pretendard-Bold.otf
           weight: 700
+        - asset: fonts/Pretendard-ExtraBold.otf
+          weight: 800
   assets:
     - assets/
 

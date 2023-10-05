@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/widgets/media_selector.dart';
 import 'package:mintb_poc_app/widgets/profile_image_tile.dart';
 
 import '../../widgets/back_nav_button.dart';
@@ -71,7 +72,12 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                       Padding(
                           padding: const EdgeInsets.only(top: 24),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const MediaSelector(),
+                                fullscreenDialog: true,
+                              ));
+                            },
                             child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
