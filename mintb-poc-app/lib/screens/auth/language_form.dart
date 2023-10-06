@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/back_nav_button.dart';
 
-class GenderForm extends StatefulWidget {
-  const GenderForm({super.key});
+class LanguageForm extends StatefulWidget {
+  const LanguageForm({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _GenderFormState();
+    return _LanguageFormState();
   }
 }
 
-class _GenderFormState extends State<GenderForm> {
-  final genders = ["여성", "남성"];
-  var selectedGender = 0;
+class _LanguageFormState extends State<LanguageForm> {
+  final languages = ["영어", "한국어"];
+  var selectedLanguage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +75,10 @@ class _GenderFormState extends State<GenderForm> {
                   Padding(
                       padding: const EdgeInsets.only(left: 16, top: 16),
                       child: Column(
-                        children: genders
+                        children: languages
                             .map((e) => Container(
                                   width: MediaQuery.of(context).size.width - 32,
-                                  margin: genders.indexOf(e) == 0
+                                  margin: languages.indexOf(e) == 0
                                       ? const EdgeInsets.only(bottom: 16)
                                       : EdgeInsets.zero,
                                   height: 60,
@@ -87,8 +87,8 @@ class _GenderFormState extends State<GenderForm> {
                                     shape: RoundedRectangleBorder(
                                       side: BorderSide(
                                           width: 1,
-                                          color: selectedGender ==
-                                                  genders.indexOf(e)
+                                          color: selectedLanguage ==
+                                                  languages.indexOf(e)
                                               ? const Color(0xFF3DDFCE)
                                               : Colors.transparent),
                                       borderRadius: BorderRadius.circular(8),
@@ -105,7 +105,8 @@ class _GenderFormState extends State<GenderForm> {
                                   child: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          selectedGender = genders.indexOf(e);
+                                          selectedLanguage =
+                                              languages.indexOf(e);
                                         });
                                       },
                                       child: Padding(
@@ -119,8 +120,8 @@ class _GenderFormState extends State<GenderForm> {
                                               e,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                color: selectedGender ==
-                                                        genders.indexOf(e)
+                                                color: selectedLanguage ==
+                                                        languages.indexOf(e)
                                                     ? const Color(0xFF3DDFCE)
                                                     : const Color(0xFFE5E5E5),
                                                 fontSize: 16,
@@ -130,8 +131,8 @@ class _GenderFormState extends State<GenderForm> {
                                               ),
                                             ),
                                             Image(
-                                              image: selectedGender ==
-                                                      genders.indexOf(e)
+                                              image: selectedLanguage ==
+                                                      languages.indexOf(e)
                                                   ? const AssetImage(
                                                       "assets/check_active.png")
                                                   : const AssetImage(

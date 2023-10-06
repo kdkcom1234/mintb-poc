@@ -1,10 +1,12 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/widgets/album_selector.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class MediaSelector extends StatefulWidget {
-  const MediaSelector({super.key, this.maxSelectSize = 5});
+  const MediaSelector({super.key, this.maxSelectSize = 6});
   final int maxSelectSize;
 
   @override
@@ -24,12 +26,16 @@ class _MediaSelectorState extends State<MediaSelector> {
 
   final ScrollController gridController = ScrollController();
 
-  Future<void> fetchImages() async {
-    final currentPath = this.currentPath;
+  Future<void> fetchImages({final bool more = false}) async {
+    if (!more) {
+      currentBlock = 0;
+      images.clear();
+      selectedImageIndexes.clear();
+    }
 
     if (currentPath != null) {
-      final List<AssetEntity> entities = (await currentPath.getAssetListPaged(
-              page: currentBlock, size: blockSize))
+      final List<AssetEntity> entities = (await currentPath!
+              .getAssetListPaged(page: currentBlock, size: blockSize))
           .where((e) => e.type == AssetType.image)
           .toList();
 
@@ -38,8 +44,14 @@ class _MediaSelectorState extends State<MediaSelector> {
       for (final entity in entities) {
         images.add(await entity.file);
       }
-
       // log(images.toString());
+
+      setState(() {
+        loading = false;
+        if (!more) {
+          gridController.jumpTo(0);
+        }
+      });
     }
   }
 
@@ -54,27 +66,18 @@ class _MediaSelectorState extends State<MediaSelector> {
         // Granted.
         final List<AssetPathEntity> paths =
             await PhotoManager.getAssetPathList();
-        // log(paths.toString());
+        log(paths.toString());
 
         final path = paths.firstWhere((e) => e.id == "isAll");
         currentPath = path;
-        // log(path.toString());
-
-        images.clear();
-        await fetchImages();
-
-        setState(() {
-          loading = false;
-        });
+        fetchImages();
 
         gridController.addListener(() async {
           if (gridController.hasClients) {
             if (gridController.position.maxScrollExtent ==
                 gridController.offset) {
-              await fetchImages();
-              setState(() {
-                currentBlock += 1;
-              });
+              currentBlock += 1;
+              fetchImages(more: true);
             }
           }
         });
@@ -136,15 +139,21 @@ class _MediaSelectorState extends State<MediaSelector> {
                             children: [
                               Positioned(
                                   right: 8,
+                                  /* -- 저장하기 버튼 */
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      final selectedImages = images
-                                          .where((element) =>
-                                              selectedImageIndexes.contains(
-                                                  images.indexOf(element)))
-                                          .toList();
+                                      final List<File?> sortedByIndexImages =
+                                          [];
+                                      for (final selectedIndex
+                                          in selectedImageIndexes) {
+                                        sortedByIndexImages.add(
+                                            images.firstWhere((element) =>
+                                                images.indexOf(element) ==
+                                                selectedIndex));
+                                      }
 
-                                      Navigator.of(context).pop(selectedImages);
+                                      Navigator.of(context)
+                                          .pop(sortedByIndexImages);
                                     },
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.zero,
@@ -170,7 +179,7 @@ class _MediaSelectorState extends State<MediaSelector> {
                     ],
                   ),
                 ),
-                /* -- folder, length */
+                /* -- selected album, length */
                 Container(
                   color: const Color(0xFF343434),
                   padding: const EdgeInsets.only(
@@ -178,8 +187,20 @@ class _MediaSelectorState extends State<MediaSelector> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      /* -- 앨범 선택 버튼 --*/
                       OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            final result = await Navigator.of(context)
+                                .push(MaterialPageRoute(
+                              builder: (context) => const AlbumSelector(),
+                              fullscreenDialog: true,
+                            )) as AssetPathEntity?;
+
+                            if (result != null) {
+                              currentPath = result;
+                              fetchImages();
+                            }
+                          },
                           style: OutlinedButton.styleFrom(
                               padding:
                                   const EdgeInsets.only(left: 12, right: 12),
@@ -230,67 +251,72 @@ class _MediaSelectorState extends State<MediaSelector> {
                 ),
                 /* -- image list */
                 Expanded(
-                    child: GridView.builder(
-                        controller: gridController,
-                        itemCount: images.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, //1 개의 행에 보여줄 item 개수
-                          childAspectRatio: 1 / 1, //item 의 가로 1, 세로 2 의 비율
-                          mainAxisSpacing: 1, //수평 Padding
-                          crossAxisSpacing: 1, //수직 Padding
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedImageIndexes.contains(index)) {
-                                    selectedImageIndexes.remove(index);
-                                  } else {
-                                    if (selectedImageIndexes.length ==
-                                        widget.maxSelectSize) {
-                                      return;
-                                    }
-                                    selectedImageIndexes.add(index);
-                                  }
-                                });
-                              },
-                              child: Stack(
-                                children: [
-                                  Image.file(
-                                    images[index]!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
-                                  Positioned(
-                                      child: Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    decoration: ShapeDecoration(
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            width: selectedImageIndexes
-                                                    .contains(index)
-                                                ? 2
-                                                : 0,
-                                            color: const Color(0xFF25ECD7)),
+                    child: Container(
+                        color: const Color(0xFF343434),
+                        child: GridView.builder(
+                            controller: gridController,
+                            itemCount: images.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, //1 개의 행에 보여줄 item 개수
+                              childAspectRatio: 1 / 1, //item 의 가로 1, 세로 2 의 비율
+                              mainAxisSpacing: 1, //수평 Padding
+                              crossAxisSpacing: 1, //수직 Padding
+                            ),
+                            itemBuilder: (BuildContext context, int index) {
+                              return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (selectedImageIndexes
+                                          .contains(index)) {
+                                        selectedImageIndexes.remove(index);
+                                      } else {
+                                        if (selectedImageIndexes.length ==
+                                            widget.maxSelectSize) {
+                                          return;
+                                        }
+                                        selectedImageIndexes.add(index);
+                                      }
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Image.file(
+                                        images[index]!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
                                       ),
-                                    ),
-                                  )),
-                                  Positioned(
-                                    top: 8,
-                                    right: 6,
-                                    child: Image.asset(
-                                      selectedImageIndexes.contains(index)
-                                          ? "assets/check_active_transparent.png"
-                                          : "assets/check_inactive.png",
-                                      width: 20,
-                                    ),
-                                  )
-                                ],
-                              ));
-                        }))
+                                      /* -- 선택 외각선 */
+                                      Positioned(
+                                          child: Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        decoration: selectedImageIndexes
+                                                .contains(index)
+                                            ? const ShapeDecoration(
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      width: 2,
+                                                      color: Color(0xFF25ECD7)),
+                                                ),
+                                              )
+                                            : null,
+                                      )),
+                                      /* -- 체크박스 */
+                                      Positioned(
+                                        top: 8,
+                                        right: 6,
+                                        child: Image.asset(
+                                          selectedImageIndexes.contains(index)
+                                              ? "assets/check_active_transparent.png"
+                                              : "assets/check_inactive.png",
+                                          width: 20,
+                                        ),
+                                      )
+                                    ],
+                                  ));
+                            })))
               ],
             ))));
   }

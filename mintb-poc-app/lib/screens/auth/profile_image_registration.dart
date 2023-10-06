@@ -18,6 +18,123 @@ class ProfileImageRegistration extends StatefulWidget {
 
 class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
   final List<File?> selectedImages = [];
+  final maxSelectSize = 6;
+
+  void removeImage(int index) {
+    final dialogWidth = MediaQuery.of(context).size.width;
+    final dialogHeight = MediaQuery.of(context).size.height;
+
+    log(dialogWidth.toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          elevation: 0, // 기본 그림자 제거
+          backgroundColor: Colors.transparent, // 백그라운드 색상 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: SizedBox(
+            width: dialogWidth, // 원하는 너비
+            height: dialogHeight, // 원하는 높이
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedImages.removeAt(index);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(const Color(0xFF292931)),
+                    padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    elevation: MaterialStateProperty.all(0), // 그림자 제거
+                  ),
+                  child: SizedBox(
+                    width: dialogWidth,
+                    height: 60,
+                    child: const Center(
+                      child: Text(
+                        '삭제',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xFFDE5854),
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w700,
+                            height: 0),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Handle the button press
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(const Color(0xFF343434)),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  ),
+                  child: SizedBox(
+                    width: dialogWidth,
+                    height: 60,
+                    child: const Center(
+                      child: Text(
+                        '취소',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xFFE5E5E5),
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w700,
+                            height: 0),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> loadImages() async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => MediaSelector(
+        maxSelectSize: maxSelectSize - selectedImages.length,
+      ),
+      fullscreenDialog: true,
+    )) as List<File?>?;
+
+    if (result != null) {
+      log(result.toString());
+      setState(() {
+        for (final file in result) {
+          selectedImages.add(file);
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,72 +192,106 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.only(top: 24),
-                          child: InkWell(
-                            onTap: () async {
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                builder: (context) => const MediaSelector(),
-                                fullscreenDialog: true,
-                              )) as List<File?>;
-
-                              log(result.toString());
-
-                              setState(() {
-                                selectedImages.clear();
-                                for (final file in result) {
-                                  selectedImages.add(file);
-                                }
-                              });
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                        padding: const EdgeInsets.only(top: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
                               children: [
-                                Row(
+                                ProfileImageTile(
+                                  isPrimary: true,
+                                  file: selectedImages.isNotEmpty
+                                      ? selectedImages[0]
+                                      : null,
+                                  onTap: selectedImages.isNotEmpty
+                                      ? () {
+                                          removeImage(0);
+                                        }
+                                      : () {
+                                          loadImages();
+                                        },
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
                                   children: [
                                     ProfileImageTile(
-                                      isPrimary: true,
-                                      file: selectedImages.isNotEmpty
-                                          ? selectedImages[0]
-                                          : null,
+                                        file: selectedImages.length > 1
+                                            ? selectedImages[1]
+                                            : null,
+                                        onTap: selectedImages.length > 1
+                                            ? () {
+                                                removeImage(1);
+                                              }
+                                            : () {
+                                                loadImages();
+                                              }),
+                                    const SizedBox(
+                                      height: 16,
                                     ),
-                                    const SizedBox(width: 16),
-                                    Column(
-                                      children: [
-                                        ProfileImageTile(
-                                            file: selectedImages.length > 1
-                                                ? selectedImages[1]
-                                                : null),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
-                                        ProfileImageTile(
-                                            file: selectedImages.length > 2
-                                                ? selectedImages[2]
-                                                : null),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  children: [
-                                    ProfileImageTile(),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    ProfileImageTile(),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    ProfileImageTile(),
+                                    ProfileImageTile(
+                                        file: selectedImages.length > 2
+                                            ? selectedImages[2]
+                                            : null,
+                                        onTap: selectedImages.length > 2
+                                            ? () {
+                                                removeImage(2);
+                                              }
+                                            : () {
+                                                loadImages();
+                                              }),
                                   ],
                                 )
                               ],
                             ),
-                          )),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Row(
+                              children: [
+                                ProfileImageTile(
+                                    file: selectedImages.length > 3
+                                        ? selectedImages[3]
+                                        : null,
+                                    onTap: selectedImages.length > 3
+                                        ? () {
+                                            removeImage(3);
+                                          }
+                                        : () {
+                                            loadImages();
+                                          }),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                ProfileImageTile(
+                                    file: selectedImages.length > 4
+                                        ? selectedImages[4]
+                                        : null,
+                                    onTap: selectedImages.length > 2
+                                        ? () {
+                                            removeImage(4);
+                                          }
+                                        : () {
+                                            loadImages();
+                                          }),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                ProfileImageTile(
+                                    file: selectedImages.length > 5
+                                        ? selectedImages[5]
+                                        : null,
+                                    onTap: selectedImages.length > 5
+                                        ? () {
+                                            removeImage(5);
+                                          }
+                                        : () {
+                                            loadImages();
+                                          }),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
 
