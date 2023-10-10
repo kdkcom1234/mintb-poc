@@ -59,19 +59,10 @@ class _CardMainState extends State<CardMain> {
                               child: Container(
                             clipBehavior: Clip.antiAlias,
                             decoration: const BoxDecoration(
-                              color: Colors.transparent,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(8),
                                 topRight: Radius.circular(8),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x3F000000),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 4),
-                                  spreadRadius: 0,
-                                )
-                              ],
                             ),
                             child: Image.asset(
                               samples[0]["image"]!,

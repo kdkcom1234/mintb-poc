@@ -249,6 +249,18 @@ class _MediaSelectorState extends State<MediaSelector> {
                     ],
                   ),
                 ),
+                /* -- 이미지 프리뷰 */
+                selectedImageIndexes.isNotEmpty
+                    ? Container(
+                        padding: const EdgeInsets.all(1),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width,
+                        child: Image.file(
+                          images[selectedImageIndexes.last]!,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 /* -- image list */
                 Expanded(
                     child: Container(
