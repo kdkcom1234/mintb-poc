@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/widgets/main_appbar.dart';
 
-class CardMain extends StatefulWidget {
-  const CardMain({super.key});
+class ProfileMain extends StatefulWidget {
+  const ProfileMain({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _CardMainState();
+    return _ProfileMainState();
   }
 }
 
-class _CardMainState extends State<CardMain> {
+class _ProfileMainState extends State<ProfileMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +25,7 @@ class _CardMainState extends State<CardMain> {
                   width: MediaQuery.of(context).size.width,
                   color: const Color(0xFF343434),
                   child: Text(
-                    "Card",
+                    "Profile",
                     style: TextStyle(color: Colors.white),
                   ),
                 ))

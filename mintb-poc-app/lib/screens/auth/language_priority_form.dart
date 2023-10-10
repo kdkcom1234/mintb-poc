@@ -2,21 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/back_nav_button.dart';
 
-class LanguageForm extends StatefulWidget {
-  const LanguageForm({super.key});
+class LanguagePriorityForm extends StatefulWidget {
+  const LanguagePriorityForm({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _LanguageFormState();
+    return _LanguagePriorityFormState();
   }
 }
 
-class _LanguageFormState extends State<LanguageForm> {
-  final languages = ["영어", "한국어"];
-  var selectedLanguages = ["영어"];
+class _LanguagePriorityFormState extends State<LanguagePriorityForm> {
+  List<String> languages = [];
+  var selectedLanguages = [];
 
   @override
   Widget build(BuildContext context) {
+    if (languages.isEmpty) {
+      languages = ModalRoute.of(context)!.settings.arguments as List<String>;
+      selectedLanguages.add(languages[0]);
+    }
+
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(color: Color(0xFF1C1C26)),
@@ -41,7 +46,7 @@ class _LanguageFormState extends State<LanguageForm> {
                         const Row(
                           children: [
                             Text(
-                              '언어 선택',
+                              '선호하는 언어',
                               style: TextStyle(
                                   color: Color(0xFF3EDFCF),
                                   fontSize: 32,
@@ -58,7 +63,7 @@ class _LanguageFormState extends State<LanguageForm> {
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width - 32,
                                   child: const Text(
-                                    '회원님의 프로필에 표시하고 같은 언어를 구사하는 멋진 짝을 찾아 드릴게요.',
+                                    '선호하시는 언어가 프로필에 먼저 표시되고, 회원님과 같은 언어를 선호하는 사람들과 연결될 수 있도록 도와드릴께요.',
                                     style: TextStyle(
                                       color: Color(0xFFD1D1D1),
                                       fontSize: 16,
@@ -169,7 +174,7 @@ class _LanguageFormState extends State<LanguageForm> {
                                       Padding(
                                         padding: EdgeInsets.only(left: 8),
                                         child: Text(
-                                          '최대 5개까지 선택할 수 있어요',
+                                          '여러 언어를 선택할 수 있습니다',
                                           style: TextStyle(
                                             color: Color(0xFFD1D1D1),
                                             fontSize: 12,
@@ -195,9 +200,8 @@ class _LanguageFormState extends State<LanguageForm> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
-                                        Navigator.of(context).pushNamed(
-                                            "/auth/language-priority-form",
-                                            arguments: selectedLanguages);
+                                        Navigator.of(context)
+                                            .pushNamed("/auth/policy-confirm");
                                       },
                                       child: const Text(
                                         '다음',

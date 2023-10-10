@@ -341,7 +341,10 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(12))),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pushNamed("/auth/language-form");
+                                      },
                                       child: const Text(
                                         '다음',
                                         textAlign: TextAlign.center,

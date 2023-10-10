@@ -13,8 +13,8 @@ class PhoneVerificationCode extends StatefulWidget {
 }
 
 class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
-  // final codes = ["7", "2", "3", "7", "5", "1"];
-  final codes = ["", "", "", "", "", ""];
+  final codes = ["7", "2", "3", "7", "5", "1"];
+  // final codes = ["", "", "", "", "", ""];
   final List<TextEditingController> codeControllers = [];
   final List<FocusNode> codeFocusNodes = [];
 
