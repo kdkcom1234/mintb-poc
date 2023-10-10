@@ -60,8 +60,8 @@ class MyApp extends StatelessWidget {
       ),
       // initialRoute: getUid() == "" ? "/auth/sign-in" : "/",
       // initialRoute: "/auth/sign-in",
-      // initialRoute: "/",
-      initialRoute: "/auth/profile-image-registration",
+      initialRoute: "/",
+      // initialRoute: "/auth/profile-image-registration",
       routes: {
         '/': (context) => const Home(),
         '/auth/sign-in': (context) => const SignIn(),
