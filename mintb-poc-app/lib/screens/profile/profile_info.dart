@@ -12,7 +12,7 @@ class ProfileInfo extends StatefulWidget {
 class _ProfileInfoState extends State<ProfileInfo> {
   var samples = [
     {
-      "image": "assets/profile_card_sample.png",
+      "image": "assets/profile_card_sample_female.png",
       "info": "Otoo, 29",
       "spec": "Influencer, 168cm, Curvy"
     },

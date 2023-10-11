@@ -17,6 +17,8 @@ import 'package:mintb_poc_app/screens/auth/profile_image_registration.dart';
 import 'package:mintb_poc_app/screens/auth/sign_in.dart';
 import 'package:mintb_poc_app/screens/auth/welcome_privacy.dart';
 import 'package:mintb_poc_app/screens/home.dart';
+import 'package:mintb_poc_app/screens/profile/wallet_send_form.dart';
+import 'package:mintb_poc_app/screens/profile/wallet_send_review.dart';
 
 import 'firebase_options.dart';
 
@@ -79,7 +81,9 @@ class MyApp extends StatelessWidget {
         '/auth/language-form': (context) => const LanguageForm(),
         '/auth/language-priority-form': (context) =>
             const LanguagePriorityForm(),
-        '/auth/policy-confirm': (context) => const PolicyConfirm()
+        '/auth/policy-confirm': (context) => const PolicyConfirm(),
+        '/profile/wallet/send-form': (context) => const WalletSendForm(),
+        '/profile/wallet/send-review': (context) => const WalletSendReview()
       },
     );
   }
