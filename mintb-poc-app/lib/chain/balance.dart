@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'package:web3dart/web3dart.dart';
 
@@ -16,7 +18,7 @@ Future<void> getBalance() async {
   // 네이티브 코인 밸런스 조회
   EtherAmount nativeBalance = await client.getBalance(address);
 
-  print('BNB Balance: ${nativeBalance.getInEther}');
+  log('BNB Balance: ${nativeBalance.getInEther}');
 
   // BEP-20 토큰 밸런스 조회
   final tokenContractAddress = EthereumAddress.fromHex(mintbPocTokenAddress);
@@ -28,5 +30,5 @@ Future<void> getBalance() async {
   final tokenBalance = await client.call(
       contract: tokenContract, function: balanceFunction, params: [address]);
 
-  print('BEP-20 Token Balance: ${tokenBalance.first}');
+  log('BEP-20 Token Balance: ${tokenBalance.first}');
 }
