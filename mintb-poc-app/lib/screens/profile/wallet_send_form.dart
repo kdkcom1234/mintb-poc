@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/widgets/back_nav_button.dart';
 
@@ -12,8 +14,19 @@ class WalletSendForm extends StatefulWidget {
 
 class _WalletSendFormState extends State<WalletSendForm> {
   var fromAddress = "0x34...a5253";
+
   final TextEditingController toAddressController = TextEditingController();
   var toAddressMessage = "Validation message";
+
+  var balance = "11,237,000";
+
+  final TextEditingController amountController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    toAddressController.text = "0x5f694aB1653A007d0025e4763e9096ffC9363F14";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,9 +200,9 @@ class _WalletSendFormState extends State<WalletSendForm> {
                                       child: TextField(
                                         controller: toAddressController,
                                         style: const TextStyle(
-                                          color: Color(0xFF8C8C8C),
+                                          color: Colors.white,
                                           fontSize: 14,
-                                          fontFamily: 'Roboto',
+                                          fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w400,
                                         ),
                                         decoration: const InputDecoration(
@@ -201,6 +214,8 @@ class _WalletSendFormState extends State<WalletSendForm> {
                                             fontWeight: FontWeight.w400,
                                           ),
                                           border: InputBorder.none,
+                                          contentPadding: EdgeInsets.only(
+                                              top: 10, right: 12, bottom: 12),
                                         ),
                                       ),
                                     ),
@@ -239,6 +254,7 @@ class _WalletSendFormState extends State<WalletSendForm> {
                     ),
                     child: Column(
                       children: [
+                        // 토큰 선택
                         Container(
                           padding: const EdgeInsets.only(
                               top: 25, bottom: 7, left: 10, right: 10),
@@ -301,9 +317,221 @@ class _WalletSendFormState extends State<WalletSendForm> {
                               )
                             ],
                           ),
-                        )
+                        ),
+                        // 밸런스
+                        Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Balance : ',
+                                        style: TextStyle(
+                                          color: Color(0xFF8C8C8C),
+                                          fontSize: 10,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          // height: 0,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: balance,
+                                        style: const TextStyle(
+                                          color: Color(0xFF3DDFCE),
+                                          fontSize: 10,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          // height: 0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.right,
+                                )
+                              ],
+                            )),
+                        // 디바이더
+                        Container(
+                          margin: const EdgeInsets.only(top: 7, bottom: 25),
+                          decoration: const ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignCenter,
+                                color: Color(0xFF1C1C26),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // 수량 입력
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(top: 12),
+                                child: Text(
+                                  'Amount',
+                                  style: TextStyle(
+                                    color: Color(0xFFD1D1D1),
+                                    fontSize: 14,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 240,
+                                height: 40,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFF373737),
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(width: 0.50),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 7,
+                                      top: 8,
+                                      child: Container(
+                                          width: 56,
+                                          height: 25,
+                                          decoration: ShapeDecoration(
+                                            color: const Color(0xFF3DDFCE),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                          ),
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                amountController.text =
+                                                    balance.replaceAll(",", "");
+                                                log("max");
+                                              });
+                                            },
+                                            child: const Center(
+                                              child: Text(
+                                                'MAX',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Color(0xFF343434),
+                                                  fontSize: 10,
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ),
+                                    Positioned(
+                                        left: 72,
+                                        top: 0,
+                                        child: SizedBox(
+                                          width: 168,
+                                          height: 40,
+                                          child: TextField(
+                                            controller: amountController,
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: true), // 숫자 및 소수점만 허용
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontFamily: 'Pretendard',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign:
+                                                TextAlign.right, // 텍스트를 우측 정렬
+                                            textAlignVertical: TextAlignVertical
+                                                .center, // 세로로는 가운데 정렬
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: '0', // 힌트 텍스트 추가
+                                              hintStyle: TextStyle(
+                                                // 힌트 텍스트 스타일
+                                                color: Color(0xFF8C8C8C),
+                                                fontSize: 14,
+                                                fontFamily: 'Pretendard',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              contentPadding: EdgeInsets.only(
+                                                  // left: 70,
+                                                  top: 10,
+                                                  right: 12,
+                                                  bottom: 12),
+                                            ),
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                    "/profile/wallet/send-review",
+                                    arguments: {
+                                      "from": fromAddress,
+                                      "to": toAddressController.text,
+                                      "amount": amountController.text,
+                                      "token": "MTB"
+                                    });
+                                // 버튼이 눌렸을 때의 동작을 여기에 추가하세요.
+                              },
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.zero), // 기본 패딩 제거
+                                backgroundColor: MaterialStateProperty.all(
+                                    const Color(0xFF25ECD7)), // 배경색 설정
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(8), // 모서리 라운드 처리
+                                  ),
+                                ),
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width - 32,
+                                height: 50,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Next',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF343434),
+                                    fontSize: 16,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w700,
+                                    height: 0,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        )),
                   )
                 ],
               ),
