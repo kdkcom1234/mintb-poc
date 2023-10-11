@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../chain/balance.dart';
+
 class WalletInfo extends StatefulWidget {
   const WalletInfo({super.key});
 
@@ -15,6 +17,13 @@ class _WalletInfoState extends State<WalletInfo> {
   var mtbValue = "340,000.34";
   var bnbAmount = "20.4721";
   var bnbValue = "4,149.05";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getBalance();
+  }
 
   @override
   Widget build(BuildContext context) {

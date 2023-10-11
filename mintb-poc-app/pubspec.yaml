@@ -39,9 +39,9 @@ dependencies:
   cloud_firestore: ^4.9.1
   firebase_core: ^2.15.1
   google_sign_in: ^6.1.5
-  photo_manager: ^2.7.1
-  web3dart: any
-  http: any
+  photo_manager: ^2.7.2
+  web3dart: ^2.7.1
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

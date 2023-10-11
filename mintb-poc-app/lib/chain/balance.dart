@@ -11,14 +11,14 @@ Future<void> getBalance() async {
     http.Client(),
   );
 
-  final privateKey =
-      EthPrivateKey.fromHex('YOUR_PRIVATE_KEY_HERE'); // 본인의 Private Key로 교체
+  final privateKey = EthPrivateKey.fromHex(''); // 본인의 Private Key로 교체
   final address = privateKey.address;
+  log('Address: $address');
 
   // 네이티브 코인 밸런스 조회
   EtherAmount nativeBalance = await client.getBalance(address);
 
-  log('BNB Balance: ${nativeBalance.getInEther}');
+  log('BNB Balance: ${nativeBalance.getValueInUnit(EtherUnit.ether)}');
 
   // BEP-20 토큰 밸런스 조회
   final tokenContractAddress = EthereumAddress.fromHex(mintbPocTokenAddress);
@@ -29,6 +29,8 @@ Future<void> getBalance() async {
   final balanceFunction = tokenContract.function('balanceOf');
   final tokenBalance = await client.call(
       contract: tokenContract, function: balanceFunction, params: [address]);
+  final tokenBalanceAmount =
+      EtherAmount.fromBigInt(EtherUnit.wei, tokenBalance.first as BigInt);
 
-  log('BEP-20 Token Balance: ${tokenBalance.first}');
+  log('BEP-20 Token Balance: ${tokenBalanceAmount.getValueInUnit(EtherUnit.ether)}');
 }
