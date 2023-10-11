@@ -40,6 +40,8 @@ dependencies:
   firebase_core: ^2.15.1
   google_sign_in: ^6.1.5
   photo_manager: ^2.7.1
+  web3dart: any
+  http: any
 
 dev_dependencies:
   flutter_test:
