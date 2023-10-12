@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mintb_poc_app/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -108,17 +109,22 @@ class _WalletInfoState extends State<WalletInfo> {
                       height: 0,
                     ),
                   ),
-                  Text(
-                    address,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF3DDFCE),
-                      fontSize: 16,
-                      fontFamily: "Pretendard",
-                      fontWeight: FontWeight.w600,
-                      height: 0,
-                    ),
-                  )
+                  InkWell(
+                      onTap: () {
+                        Clipboard.setData(
+                            ClipboardData(text: walletAddress().toString()));
+                      },
+                      child: Text(
+                        address,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF3DDFCE),
+                          fontSize: 16,
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w600,
+                          height: 0,
+                        ),
+                      ))
                 ],
               ),
             ),
