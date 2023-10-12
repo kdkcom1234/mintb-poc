@@ -82,12 +82,13 @@ class _WalletInfoState extends State<WalletInfo> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+      padding: const EdgeInsets.only(top: 24),
       child: Column(
         children: [
           // 주소
           Container(
             height: 48,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: ShapeDecoration(
               color: const Color(0xFF484848),
               shape: RoundedRectangleBorder(
@@ -131,7 +132,7 @@ class _WalletInfoState extends State<WalletInfo> {
           ),
           // 기능 목록
           Padding(
-            padding: const EdgeInsets.only(top: 28, left: 16, right: 16),
+            padding: const EdgeInsets.only(top: 28, left: 26, right: 26),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -290,11 +291,12 @@ class _WalletInfoState extends State<WalletInfo> {
           ),
           // 디바이더
           Container(
+            width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.only(top: 40, bottom: 20),
             decoration: const ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  width: 8,
+                  width: 4,
                   strokeAlign: BorderSide.strokeAlignCenter,
                   color: Color(0xFF1C1C26),
                 ),
@@ -302,7 +304,8 @@ class _WalletInfoState extends State<WalletInfo> {
             ),
           ),
           // MTB 토큰
-          SizedBox(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -398,7 +401,8 @@ class _WalletInfoState extends State<WalletInfo> {
           const SizedBox(
             height: 20,
           ),
-          SizedBox(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

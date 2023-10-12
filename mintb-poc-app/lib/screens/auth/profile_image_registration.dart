@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mintb_poc_app/widgets/profile_image_tile.dart';
 
 import '../../preferences/profile_local.dart';
@@ -343,6 +344,12 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
+                                        if (selectedImages.isEmpty) {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Please select one or more images");
+                                          return;
+                                        }
                                         (() async {
                                           // save local profile
                                           final profileLocal =

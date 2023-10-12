@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
 
 import '../../widgets/back_nav_button.dart';
@@ -173,6 +174,13 @@ class _NicknameFormState extends State<NicknameForm> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
+                                        if (nicknameController.text.isEmpty) {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Please enter your nickname");
+                                          return;
+                                        }
+
                                         (() async {
                                           await saveProfileLocal(ProfileLocal(
                                               nickname: nicknameController.text,

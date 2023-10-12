@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mintb_poc_app/widgets/back_nav_button.dart';
 
 class PhoneVerification extends StatefulWidget {
@@ -248,6 +249,12 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12))),
                   onPressed: () {
+                    if (phoneTextController.text.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "Please enter your phone number");
+                      return;
+                    }
+
                     Navigator.of(context)
                         .pushNamed("/auth/phone-verification-code", arguments: {
                       "countryCode": countryCode,

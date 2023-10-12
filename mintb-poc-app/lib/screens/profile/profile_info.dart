@@ -127,7 +127,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             ),
           ),
           Padding(
-              padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.only(bottom: 16, left: 24, right: 24),
               child: Container(
                   height: 64,
                   decoration: ShapeDecoration(
@@ -166,7 +166,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
                     ),
                   ))),
           Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.only(left: 24, right: 24),
               child: Container(
                 height: 64,
                 decoration: ShapeDecoration(

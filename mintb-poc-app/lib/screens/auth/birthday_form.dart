@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
@@ -331,6 +332,14 @@ class _BirthdayFormState extends State<BirthdayForm> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
                           onPressed: () {
+                            if (yearController.text.isEmpty ||
+                                monthController.text.isEmpty ||
+                                dayController.text.isEmpty) {
+                              Fluttertoast.showToast(
+                                  msg: "Please enter your birthday");
+                              return;
+                            }
+
                             (() async {
                               final profileLocal = await getProfileLocal();
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../widgets/back_nav_button.dart';
 
@@ -179,6 +180,14 @@ class _PhoneVerificationCodeState extends State<PhoneVerificationCode> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12))),
                       onPressed: () {
+                        for (final controller in codeControllers) {
+                          if (controller.text.isEmpty) {
+                            Fluttertoast.showToast(
+                                msg: "Please enter all code");
+                            return;
+                          }
+                        }
+
                         Navigator.of(context).pushNamed("/auth/nickname-form");
                       },
                       child: const Text(
