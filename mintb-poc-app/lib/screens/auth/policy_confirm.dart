@@ -1,5 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
+import 'package:mintb_poc_app/firebase/storage/files.dart';
+import 'package:mintb_poc_app/screens/home.dart';
+
+import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
 
 class PolicyConfirm extends StatefulWidget {
@@ -12,6 +19,8 @@ class PolicyConfirm extends StatefulWidget {
 }
 
 class _PolicyConfirmState extends State<PolicyConfirm> {
+  var loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,18 +153,65 @@ class _PolicyConfirmState extends State<PolicyConfirm> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
                           onPressed: () {
-                            Navigator.of(context).pushNamed("/");
+                            (() async {
+                              final profileLocal = await getProfileLocal();
+
+                              if (profileLocal != null) {
+                                log(profileLocal!.toJson().toString());
+
+                                setState(() {
+                                  loading = true;
+                                });
+
+                                // 이미지 업로드
+                                List<String> imageUrlList = [];
+                                for (final path in profileLocal.images) {
+                                  final url = await uploadFile(File(path));
+                                  imageUrlList.add(url);
+                                }
+                                final toSaveProfileLocal = ProfileLocal(
+                                    nickname: profileLocal.nickname,
+                                    age: profileLocal.age,
+                                    gender: profileLocal.gender,
+                                    images: imageUrlList);
+
+                                // preference 저장
+                                await saveProfileLocal(toSaveProfileLocal);
+                                // firestore 저장
+                                await createProfile(toSaveProfileLocal);
+
+                                setState(() {
+                                  loading = false;
+                                });
+
+                                if (!mounted) return;
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const Home()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              }
+                            })();
                           },
-                          child: const Text(
-                            '모두 동의하고 회원가입 완료',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF343434),
-                              fontSize: 16,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                          child: loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFF343434),
+                                  ))
+                              : const Text(
+                                  '모두 동의하고 회원가입 완료',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF343434),
+                                    fontSize: 16,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                         ),
                       )
                     ],

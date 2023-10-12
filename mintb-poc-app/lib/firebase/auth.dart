@@ -57,7 +57,7 @@ Future<void> signOut() async {
   return await FirebaseAuth.instance.signOut();
 }
 
-getUid() {
+String getUid() {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser != null) {
     return currentUser.uid;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/widgets/profile_image_tile.dart';
 
+import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
 import '../../widgets/media_selector.dart';
 
@@ -342,8 +343,29 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed("/auth/language-form");
+                                        (() async {
+                                          // save local profile
+                                          final profileLocal =
+                                              await getProfileLocal();
+
+                                          if (profileLocal != null) {
+                                            await saveProfileLocal(ProfileLocal(
+                                                nickname: profileLocal.nickname,
+                                                age: profileLocal.age,
+                                                gender: profileLocal.gender,
+                                                images: selectedImages
+                                                    .map((e) => e!.path)
+                                                    .toList()));
+
+                                            log((await getProfileLocal())!
+                                                .toJson()
+                                                .toString());
+
+                                            if (!mounted) return;
+                                            Navigator.of(context).pushNamed(
+                                                "/auth/language-form");
+                                          }
+                                        })();
                                       },
                                       child: const Text(
                                         '다음',

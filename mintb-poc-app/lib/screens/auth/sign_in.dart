@@ -79,9 +79,9 @@ class _SignInState extends State<SignIn> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: loginProcessing
                                 ? [
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 8, bottom: 8),
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 20,
                                       child: CircularProgressIndicator(),
                                     )
                                   ]

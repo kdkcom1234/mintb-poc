@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
 
 class BirthdayForm extends StatefulWidget {
@@ -19,12 +20,28 @@ class _BirthdayFormState extends State<BirthdayForm> {
   final FocusNode monthFocus = FocusNode();
   final FocusNode dayFocus = FocusNode();
 
+  int calculateAge(String year, String month, String day) {
+    DateTime currentDate = DateTime.now();
+    DateTime birthDate =
+        DateTime(int.parse(year), int.parse(month), int.parse(day));
+
+    int age = currentDate.year - birthDate.year;
+
+    if (currentDate.month < birthDate.month ||
+        (currentDate.month == birthDate.month &&
+            currentDate.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
+  }
+
   @override
   void initState() {
     super.initState();
-    yearController.text = "1990";
-    monthController.text = "10";
-    dayController.text = "04";
+    yearController.text = "1992";
+    monthController.text = "7";
+    dayController.text = "28";
   }
 
   @override
@@ -314,8 +331,24 @@ class _BirthdayFormState extends State<BirthdayForm> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
                           onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed("/auth/gender-form");
+                            (() async {
+                              final profileLocal = await getProfileLocal();
+
+                              if (profileLocal != null) {
+                                await saveProfileLocal(ProfileLocal(
+                                    nickname: profileLocal.nickname,
+                                    age: calculateAge(
+                                        yearController.text,
+                                        monthController.text,
+                                        dayController.text),
+                                    gender: 0,
+                                    images: []));
+
+                                if (!mounted) return;
+                                Navigator.of(context)
+                                    .pushNamed("/auth/gender-form");
+                              }
+                            })();
                           },
                           child: const Text(
                             '다음',

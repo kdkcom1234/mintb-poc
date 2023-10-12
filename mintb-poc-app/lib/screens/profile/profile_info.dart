@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+
+import '../../preferences/profile_local.dart';
 
 class ProfileInfo extends StatefulWidget {
   const ProfileInfo({super.key});
@@ -23,6 +27,27 @@ class _ProfileInfoState extends State<ProfileInfo> {
     },
   ];
 
+  ProfileLocal? profile;
+  var loading = true;
+
+  Future<void> loadProfile() async {
+    profile = await getProfileLocal();
+    if (profile != null) {
+      log(profile!.toJson().toString());
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -40,10 +65,12 @@ class _ProfileInfoState extends State<ProfileInfo> {
                   color: Color(0xFFD9D9D9),
                   shape: OvalBorder(),
                 ),
-                child: Image.asset(
-                  samples[0]["image"]!,
+                child: Image.network(
+                  profile != null
+                      ? profile!.images[0]
+                      : "https://placehold.co/400x400/png",
                   fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
+                  alignment: Alignment.topLeft,
                 ),
               )
             ],
@@ -51,7 +78,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
           Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 8),
             child: Text(
-              samples[0]["info"]!,
+              profile != null ? '${profile!.nickname}, ${profile!.age}' : "",
               style: const TextStyle(
                 color: Color(0xFF3DDFCE),
                 fontSize: 24,
@@ -62,7 +89,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             ),
           ),
           Text(
-            samples[0]["spec"]!,
+            profile != null ? samples[profile!.gender]["spec"]! : "",
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFFDADADA),

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../firebase/auth.dart';
-import '../firebase/collections/todo_collection.dart';
+import '../firebase/firestore/todo_collection.dart';
 
 class TodoList extends StatefulWidget {
   const TodoList({super.key});

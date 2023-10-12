@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/preferences/profile_local.dart';
 
 import '../../widgets/back_nav_button.dart';
 
@@ -17,7 +18,7 @@ class _NicknameFormState extends State<NicknameForm> {
   @override
   void initState() {
     super.initState();
-    nicknameController.text = "닉네임";
+    nicknameController.text = "Son";
   }
 
   @override
@@ -172,8 +173,17 @@ class _NicknameFormState extends State<NicknameForm> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed("/auth/birthday-form");
+                                        (() async {
+                                          await saveProfileLocal(ProfileLocal(
+                                              nickname: nicknameController.text,
+                                              age: 0,
+                                              gender: 0,
+                                              images: []));
+
+                                          if (!mounted) return;
+                                          Navigator.of(context)
+                                              .pushNamed("/auth/birthday-form");
+                                        })();
                                       },
                                       child: const Text(
                                         '다음',

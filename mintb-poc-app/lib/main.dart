@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/firebase/auth.dart';
+import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
+import 'package:mintb_poc_app/preferences/profile_local.dart';
 import 'package:mintb_poc_app/screens/auth/birthday_form.dart';
 import 'package:mintb_poc_app/screens/auth/gender_form.dart';
 import 'package:mintb_poc_app/screens/auth/language_form.dart';
@@ -25,15 +28,15 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebase();
+  final initRoute = await loadProfile();
 
-  runApp(const MyApp());
+  runApp(MyApp(
+    initialRoute: initRoute,
+  ));
 }
 
 // 파이어베이스앱 초기화
-initFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  log(FirebaseAuth.instance.currentUser.toString());
-
+Future<void> initFirebase() async {
   // 개발모드일 때 로컬 에뮬레이터 사용
   // if (kDebugMode) {
   //   try {
@@ -44,10 +47,31 @@ initFirebase() async {
   //     print(e);
   //   }
   // }
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  log(FirebaseAuth.instance.currentUser.toString());
+}
+
+Future<String> loadProfile() async {
+  if (getUid() != "") {
+    final profile = await fetchProfileDoc();
+    if (profile != null) {
+      saveProfileLocal(ProfileLocal(
+          nickname: profile.nickname,
+          age: profile.age,
+          gender: profile.gender,
+          images: profile.images));
+
+      return "/";
+    }
+  }
+
+  return "/auth/sign-in";
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialRoute});
+  final String initialRoute;
 
   // This widget is the root of your application.
   @override
@@ -60,10 +84,7 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF25ECD7),
         ),
       ),
-      // initialRoute: getUid() == "" ? "/auth/sign-in" : "/",
-      // initialRoute: "/auth/sign-in",
-      initialRoute: "/",
-      // initialRoute: "/auth/profile-image-registration",
+      initialRoute: initialRoute,
       routes: {
         '/': (context) => const Home(),
         '/auth/sign-in': (context) => const SignIn(),

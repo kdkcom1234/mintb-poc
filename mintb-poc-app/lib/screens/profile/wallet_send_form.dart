@@ -3,8 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mintb_poc_app/chain/web3_integration.dart';
 import 'package:mintb_poc_app/extensions.dart';
+import 'package:mintb_poc_app/onchain/web3_integration.dart';
 import 'package:mintb_poc_app/widgets/back_nav_button.dart';
 
 class WalletSendForm extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
 
 class GenderForm extends StatefulWidget {
@@ -160,8 +161,21 @@ class _GenderFormState extends State<GenderForm> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12))),
                           onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed("/auth/profile-image-registration");
+                            (() async {
+                              final profileLocal = await getProfileLocal();
+
+                              if (profileLocal != null) {
+                                await saveProfileLocal(ProfileLocal(
+                                    nickname: profileLocal.nickname,
+                                    age: profileLocal.age,
+                                    gender: selectedGender,
+                                    images: []));
+
+                                if (!mounted) return;
+                                Navigator.of(context).pushNamed(
+                                    "/auth/profile-image-registration");
+                              }
+                            })();
                           },
                           child: const Text(
                             '다음',

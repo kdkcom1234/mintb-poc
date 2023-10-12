@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../firebase/collections/todo_collection.dart';
+import '../firebase/firestore/todo_collection.dart';
 
 class TodoForm extends StatefulWidget {
   const TodoForm({super.key});
