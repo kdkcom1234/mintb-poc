@@ -3,11 +3,10 @@ import 'dart:math';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:mintb_poc_app/keys/private_key.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'mintb_poc_token.dart';
-
-const testPrivateKey = '';
 
 const chainId = 97;
 
