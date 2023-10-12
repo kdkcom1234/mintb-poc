@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/extensions.dart';
+
+import '../../chain/web3_integration.dart';
 import '../../widgets/back_nav_button.dart';
 
 class WalletSendReview extends StatefulWidget {
@@ -13,11 +17,34 @@ class WalletSendReview extends StatefulWidget {
 
 class _WalletSendReviewState extends State<WalletSendReview> {
   var gasFee = "0.00012 BNB";
+  var fromAddress = "";
+  var toAddress = "";
+  var amount = "";
+  var token = "";
+
+  Future<void> setEstimatedGas() async {
+    final result = await getEstimatedGas(toAddress, amount);
+    log(result);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    if (fromAddress.isEmpty) {
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+      fromAddress = args["from"]!;
+      toAddress = args["to"]!;
+      amount = args["amount"]!;
+      token = args["token"]!;
+
+      setEstimatedGas();
+    }
 
     return Scaffold(
       body: Container(
@@ -110,7 +137,7 @@ class _WalletSendReviewState extends State<WalletSendReview> {
                                   height: 8,
                                 ),
                                 Text(
-                                  args["from"]!,
+                                  fromAddress.shortenFromAddress(),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     color: Color(0xFF8C8C8C),
@@ -142,7 +169,7 @@ class _WalletSendReviewState extends State<WalletSendReview> {
                               ),
                             ),
                             Text(
-                              "${args["to"]!.substring(0, 4)}...${args["to"]!.substring(args["to"]!.length - 5, args["to"]!.length)}",
+                              toAddress.shortenFromAddress(),
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 color: Color(0xFFFCFCFC),
@@ -186,7 +213,7 @@ class _WalletSendReviewState extends State<WalletSendReview> {
                               ),
                             ),
                             Text(
-                              '${args["amount"]} ${args["token"]}',
+                              '$amount $token',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 color: Color(0xFF3DDFCE),
@@ -288,6 +315,11 @@ class _WalletSendReviewState extends State<WalletSendReview> {
                             ),
                             onPressed: () {
                               //TODO: 버튼을 눌렀을 때의 로직을 여기에 추가하세요
+                              transferTokens(toAddress, amount);
+                              var count = 0;
+                              Navigator.popUntil(context, (route) {
+                                return count++ == 2;
+                              });
                             },
                             child: Container(
                               height: 50,

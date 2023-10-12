@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mintb_poc_app/chain/web3_integration.dart';
+import 'package:mintb_poc_app/extensions.dart';
 import 'package:mintb_poc_app/widgets/back_nav_button.dart';
 
 class WalletSendForm extends StatefulWidget {
@@ -13,19 +17,43 @@ class WalletSendForm extends StatefulWidget {
 }
 
 class _WalletSendFormState extends State<WalletSendForm> {
-  var fromAddress = "0x34...a5253";
+  var fromAddress = walletAddress().toString();
 
   final TextEditingController toAddressController = TextEditingController();
-  var toAddressMessage = "Validation message";
+  var toAddressValidateMessage = "";
 
-  var balance = "11,237,000";
+  var balance = "0";
 
   final TextEditingController amountController = TextEditingController();
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    toAddressController.text = "0x5f694aB1653A007d0025e4763e9096ffC9363F14";
+    // toAddressController.text = "0x5f694aB1653A007d0025e4763e9096ffC9363F14";
+
+    setBalanceValue();
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      setBalanceValue();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Future<void> setBalanceValue() async {
+    final result = await getTokenBalance();
+    // log(result.toString());
+
+    setState(() {
+      balance = double.parse(result)
+          .truncateToDecimalPlaces(4)
+          .toString()
+          .formatNumberWithCommas();
+    });
   }
 
   @override
@@ -134,7 +162,7 @@ class _WalletSendFormState extends State<WalletSendForm> {
                                     height: 8,
                                   ),
                                   Text(
-                                    fromAddress,
+                                    fromAddress.shortenFromAddress(),
                                     textAlign: TextAlign.right,
                                     style: const TextStyle(
                                       color: Color(0xFF8C8C8C),
@@ -198,6 +226,18 @@ class _WalletSendFormState extends State<WalletSendForm> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: TextField(
+                                        onChanged: (text) {
+                                          if (!isValidEthereumAddress(text)) {
+                                            setState(() {
+                                              toAddressValidateMessage =
+                                                  "invalid address";
+                                            });
+                                          } else {
+                                            setState(() {
+                                              toAddressValidateMessage = "";
+                                            });
+                                          }
+                                        },
                                         controller: toAddressController,
                                         style: const TextStyle(
                                           color: Colors.white,
@@ -224,7 +264,7 @@ class _WalletSendFormState extends State<WalletSendForm> {
                                     height: 8,
                                   ),
                                   Text(
-                                    toAddressMessage,
+                                    toAddressValidateMessage,
                                     style: const TextStyle(
                                       color: Color(0xFFDE5854),
                                       fontSize: 10,
@@ -491,15 +531,52 @@ class _WalletSendFormState extends State<WalletSendForm> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
+                                if (toAddressController.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please enter the `to address`.",
+                                      toastLength: Toast.LENGTH_LONG);
+
+                                  return;
+                                }
+
+                                if (toAddressValidateMessage.isNotEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Please enter the valid `to address`.",
+                                      toastLength: Toast.LENGTH_LONG);
+
+                                  return;
+                                }
+
+                                if (amountController.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please enter the amount of tokens.",
+                                      toastLength: Toast.LENGTH_LONG);
+
+                                  return;
+                                }
+
+                                if (amountController.text.toDouble() >
+                                    balance.toDouble()) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Please enter the valid amount of tokens.",
+                                      toastLength: Toast.LENGTH_LONG);
+
+                                  return;
+                                }
+
                                 Navigator.of(context).pushNamed(
                                     "/profile/wallet/send-review",
                                     arguments: {
                                       "from": fromAddress,
                                       "to": toAddressController.text,
-                                      "amount": amountController.text,
+                                      "amount":
+                                          amountController.text.removeCommas(),
                                       "token": "MTB"
                                     });
-                                // 버튼이 눌렸을 때의 동작을 여기에 추가하세요.
+
+                                FocusScope.of(context).unfocus();
                               },
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all(

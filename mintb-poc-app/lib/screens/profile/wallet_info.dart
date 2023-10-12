@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import '../../chain/balance.dart';
+import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../chain/web3_integration.dart';
 
 class WalletInfo extends StatefulWidget {
   const WalletInfo({super.key});
@@ -12,17 +16,66 @@ class WalletInfo extends StatefulWidget {
 }
 
 class _WalletInfoState extends State<WalletInfo> {
-  var address = "0x4F...3B40";
-  var mtbAmount = "2123.1123";
-  var mtbValue = "340,000.34";
-  var bnbAmount = "20.4721";
-  var bnbValue = "4,149.05";
+  final address = walletAddress().toString().shortenFromAddress();
+
+  var mtbAmount = "0";
+  var mtbPrice = 1;
+
+  var bnbAmount = "0";
+  var bnbPrice = 200;
+
+  late Timer _timer;
+
+  String mtbValue() {
+    return (double.parse(mtbAmount.replaceAll(",", "")) * mtbPrice)
+        .truncateToDecimalPlaces(2)
+        .toString()
+        .formatNumberWithCommas();
+  }
+
+  String bnbValue() {
+    return (double.parse(bnbAmount.replaceAll(",", "")) * bnbPrice)
+        .truncateToDecimalPlaces(2)
+        .toString()
+        .formatNumberWithCommas();
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getBalance();
+
+    setNativeBalance();
+    setTokenBalance();
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      setNativeBalance();
+      setTokenBalance();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Future<void> setNativeBalance() async {
+    final result = await getNativeBalance();
+    setState(() {
+      bnbAmount = double.parse(result)
+          .truncateToDecimalPlaces(4)
+          .toString()
+          .formatNumberWithCommas();
+    });
+  }
+
+  Future<void> setTokenBalance() async {
+    final result = await getTokenBalance();
+    setState(() {
+      mtbAmount = double.parse(result)
+          .truncateToDecimalPlaces(4)
+          .toString()
+          .formatNumberWithCommas();
+    });
   }
 
   @override
@@ -81,8 +134,9 @@ class _WalletInfoState extends State<WalletInfo> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context)
-                            .pushNamed("/profile/wallet/send-form");
+                        Navigator.of(context).pushNamed(
+                            "/profile/wallet/send-form",
+                            arguments: mtbAmount);
                       },
                       child: Container(
                         width: 56,
@@ -190,7 +244,10 @@ class _WalletInfoState extends State<WalletInfo> {
                 Column(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        launchUrl(Uri.parse(
+                            'https://testnet.bscscan.com/address/${walletAddress().toString()}'));
+                      },
                       child: Container(
                         width: 56,
                         height: 56,
@@ -315,7 +372,7 @@ class _WalletInfoState extends State<WalletInfo> {
                           height: 4,
                         ),
                         Text(
-                          '\$ $mtbValue',
+                          '\$ ${mtbValue()}',
                           textAlign: TextAlign.right,
                           style: const TextStyle(
                             color: Color(0xFF8C8C8C),
@@ -411,7 +468,7 @@ class _WalletInfoState extends State<WalletInfo> {
                           height: 4,
                         ),
                         Text(
-                          '\$ $bnbValue',
+                          '\$ ${bnbValue()}',
                           textAlign: TextAlign.right,
                           style: const TextStyle(
                             color: Color(0xFF8C8C8C),

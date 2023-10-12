@@ -42,6 +42,8 @@ dependencies:
   photo_manager: ^2.7.2
   web3dart: ^2.7.1
   http: ^1.1.0
+  fluttertoast: ^8.2.2
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:
