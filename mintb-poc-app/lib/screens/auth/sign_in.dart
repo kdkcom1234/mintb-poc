@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
+import 'package:mintb_poc_app/preferences/profile_local.dart';
+
+import '../../firebase/firestore/profile_collection.dart';
+import '../home.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -63,12 +67,34 @@ class _SignInState extends State<SignIn> {
                             setState(() {
                               loginProcessing = true;
                             });
-
+                            // 구글 로그인
                             final result = await signInWithGoogle(context);
+                            // 로그인이 되었으면
                             if (result?.user != null) {
-                              if (!mounted) return;
-                              Navigator.of(context)
-                                  .pushNamed("/auth/welcome-privacy");
+                              // 기존 서버 저장 프로필 조회
+                              final profile = await fetchProfileDoc();
+                              // 기존 서버 저장 프로필이 있을 때
+                              if (profile != null) {
+                                // 로컬에 프로필 로드 함
+                                saveProfileLocal(ProfileLocal(
+                                    nickname: profile.nickname,
+                                    age: profile.age,
+                                    gender: profile.gender,
+                                    images: profile.images));
+                                // 홈으로 이동
+                                if (!mounted) return;
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Home()),
+                                    (Route<dynamic> route) => false);
+                              } else {
+                                // 서버 저장 프로필이 없을 때는 회원가입 프로세스 진행
+                                if (!mounted) return;
+                                Navigator.of(context)
+                                    .pushNamed("/auth/welcome-privacy");
+                              }
                             }
 
                             setState(() {
