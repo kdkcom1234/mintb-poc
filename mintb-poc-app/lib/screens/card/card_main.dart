@@ -53,7 +53,7 @@ class _CardMainState extends State<CardMain> {
   }
 
   void handleFilterPressed() async {
-    Navigator.of(context).push(MaterialPageRoute(
+    await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const CardFilter(),
       fullscreenDialog: true,
     ));
