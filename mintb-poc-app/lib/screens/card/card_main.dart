@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
-import 'package:mintb_poc_app/widgets/main_appbar.dart';
+import 'package:mintb_poc_app/screens/card/card_appbar.dart';
+import 'package:mintb_poc_app/screens/card/card_empty.dart';
+import 'package:mintb_poc_app/screens/card/card_filter.dart';
 
 class CardMain extends StatefulWidget {
   const CardMain({super.key});
@@ -14,18 +16,19 @@ class CardMain extends StatefulWidget {
 class _CardMainState extends State<CardMain> {
   var samples = [
     {
-      "image": "assets/profile_card_sample_female.png",
+      "image": "assets/profile_card_sample_female2.png",
       "info": "Otoo, 29",
-      "spec": "Influencer, 168cm, Curvy"
+      "spec": "Influencer, 168cm"
     },
     {
       "image": "assets/profile_card_sample_male.jpg",
       "info": "V, 27",
-      "spec": "Surgeon General, 185cm, Muscular"
+      "spec": "Surgeon General, 185cm"
     },
   ];
   var selectedIndex = 1;
   var loading = true;
+  var empty = false;
 
   Future<void> setCard() async {
     setState(() {
@@ -43,11 +46,26 @@ class _CardMainState extends State<CardMain> {
     });
   }
 
+  void handleRefreshPressed() {
+    setState(() {
+      empty = !empty;
+    });
+  }
+
+  void handleFilterPressed() async {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const CardFilter(),
+      fullscreenDialog: true,
+    ));
+    setState(() {
+      empty = false;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     setCard();
   }
 
@@ -55,128 +73,114 @@ class _CardMainState extends State<CardMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          color: const Color(0xFF1C1C26),
+          color: const Color(0xFF343434),
           child: SafeArea(
             child: Column(
               children: [
-                const MainAppbar(),
+                CardAppbar(
+                  onRefreshPressed: handleRefreshPressed,
+                  onFilterPressed: handleFilterPressed,
+                ),
                 Expanded(
                     child: Container(
-                  padding: const EdgeInsets.all(25),
+                  padding: const EdgeInsets.only(
+                      left: 18, right: 18, top: 18.2, bottom: 20),
                   color: const Color(0xFF343434),
                   child: loading
                       ? const SizedBox.shrink()
-                      : Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                              bottomLeft: Radius.circular(8),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xE53DDFCE),
-                                blurRadius: 0,
-                                offset: Offset(4, 4),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              Column(
+                      : empty
+                          ? CardEmpty(
+                              onFilterPressed: handleFilterPressed,
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      samples[selectedIndex]["image"]!),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Stack(
                                 children: [
-                                  Expanded(
-                                      child: Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8),
+                                  Positioned(
+                                    bottom: 38,
+                                    left: 18,
+                                    child: SizedBox(
+                                      height: 51,
+                                      width: MediaQuery.of(context).size.width -
+                                          62,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                samples[selectedIndex]["info"]!,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 0,
+                                                  shadows: [
+                                                    Shadow(
+                                                      offset: Offset(1.0, 1.0),
+                                                      blurRadius: 1.0,
+                                                      color: Color.fromRGBO(
+                                                          0, 0, 0, 0.60),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Text(
+                                                samples[selectedIndex]["spec"]!,
+                                                style: const TextStyle(
+                                                  color: Color(0xFFD5DBDB),
+                                                  fontSize: 14,
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w400,
+                                                  height: 0,
+                                                  shadows: <Shadow>[
+                                                    Shadow(
+                                                      offset: Offset(1.0, 1.0),
+                                                      blurRadius: 1.0,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Image.asset(
+                                                "assets/check_badge.png",
+                                                width: 20,
+                                                height: 20.15,
+                                              ),
+                                              const SizedBox(
+                                                width: 9,
+                                              ),
+                                              Image.asset(
+                                                "assets/profile_badge.png",
+                                                width: 20,
+                                                height: 20.98,
+                                              ),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
-                                    child: Image.asset(
-                                      samples[selectedIndex]["image"]!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                50,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFF1C1C26),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(8),
-                                            bottomRight: Radius.circular(8),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 15, left: 16),
-                                                  child: Text(
-                                                    samples[selectedIndex]
-                                                        ["info"]!,
-                                                    style: const TextStyle(
-                                                      color: Color(0xFF3DDFCE),
-                                                      fontSize: 24,
-                                                      fontFamily: "Pretendard",
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      // height: 0,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 8,
-                                                          left: 16,
-                                                          bottom: 15),
-                                                  child: Text(
-                                                    //Surgeon General, 185cm, muscular
-                                                    samples[selectedIndex]
-                                                        ["spec"]!,
-                                                    style: const TextStyle(
-                                                      color: Color(0x99D2D2D2),
-                                                      fontSize: 14,
-                                                      fontFamily: "Pretendard",
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      // height: 0,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
                                   )
                                 ],
                               ),
-                              Positioned(
-                                  left: 8,
-                                  top: 8,
-                                  child: Image.asset(
-                                    "assets/refresh_button.png",
-                                    width: 38,
-                                    height: 38,
-                                  ))
-                            ],
-                          )),
+                            ),
                 ))
               ],
             ),

@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+
+class CustomRangeSliderThumbShape extends RoundRangeSliderThumbShape {
+  final double thumbRadius;
+
+  CustomRangeSliderThumbShape({this.thumbRadius = 10.0});
+
+  @override
+  void paint(PaintingContext context, Offset center,
+      {required Animation<double> activationAnimation,
+      required Animation<double> enableAnimation,
+      bool isDiscrete = false,
+      bool isEnabled = false,
+      bool? isOnTop,
+      required SliderThemeData sliderTheme,
+      TextDirection? textDirection,
+      Thumb? thumb,
+      bool? isPressed}) {
+    final Canvas canvas = context.canvas;
+
+    final Paint paint = Paint()
+      ..color = const Color(0xFF3EDFCF)
+      ..style = PaintingStyle.fill;
+
+    final Rect rect = Rect.fromCenter(
+      center: center,
+      width: 2 * thumbRadius,
+      height: 2 * thumbRadius,
+    );
+
+    final RRect rRect = RRect.fromRectAndRadius(
+      rect,
+      const Radius.circular(4),
+    );
+
+    canvas.drawRRect(rRect, paint);
+  }
+}
+
+class CustomRangeSliderTrackShape extends RoundedRectRangeSliderTrackShape {
+  @override
+  Rect getPreferredRect({
+    required RenderBox parentBox,
+    Offset offset = Offset.zero,
+    required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final double? trackHeight = sliderTheme.trackHeight;
+    final double trackLeft = offset.dx;
+    final double trackTop =
+        offset.dy + (parentBox.size.height - trackHeight!) / 2;
+    final double trackWidth = parentBox.size.width;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
+  }
+}
