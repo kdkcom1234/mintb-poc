@@ -22,10 +22,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
+  void handleTabChanging() {
+    setState(() {
+      currentIndex = controller.index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     controller = TabController(length: 2, vsync: this);
+    controller.addListener(handleTabChanging);
   }
 
   @override
@@ -47,7 +54,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   changeTabsIndex(0);
                 },
                 child: Image.asset(
-                  controller.index == 0
+                  currentIndex == 0
                       ? "assets/tabbar_card_icon_active.png"
                       : "assets/tabbar_card_icon.png",
                   width: 40,
@@ -92,7 +99,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   changeTabsIndex(1);
                 },
                 child: Image.asset(
-                  controller.index == 1
+                  currentIndex == 1
                       ? "assets/tabbar_profile_icon_active.png"
                       : "assets/tabbar_profile_icon.png",
                   width: 40,

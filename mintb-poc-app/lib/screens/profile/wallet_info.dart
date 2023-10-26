@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:mintb_poc_app/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../onchain/web3_integration.dart';
+import '../../offchain/web3_integration.dart';
 
 class WalletInfo extends StatefulWidget {
   const WalletInfo({super.key});

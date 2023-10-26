@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/extensions.dart';
 
-import '../../onchain/web3_integration.dart';
+import '../../offchain/web3_integration.dart';
 import '../../widgets/back_nav_button.dart';
 
 class WalletSendReview extends StatefulWidget {
