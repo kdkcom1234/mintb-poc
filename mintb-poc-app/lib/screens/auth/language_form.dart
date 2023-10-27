@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants.dart';
+import '../../preferences/profile_local.dart';
 import '../../widgets/back_nav_button.dart';
 
 class LanguageForm extends StatefulWidget {
@@ -12,8 +14,7 @@ class LanguageForm extends StatefulWidget {
 }
 
 class _LanguageFormState extends State<LanguageForm> {
-  final languages = ["영어", "한국어"];
-  var selectedLanguages = ["영어"];
+  var selectedLanguages = [0];
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +88,8 @@ class _LanguageFormState extends State<LanguageForm> {
                                     shape: RoundedRectangleBorder(
                                       side: BorderSide(
                                           width: 1,
-                                          color: selectedLanguages.contains(e)
+                                          color: selectedLanguages.contains(
+                                                  languages.indexOf(e))
                                               ? const Color(0xFF3DDFCE)
                                               : Colors.transparent),
                                       borderRadius: BorderRadius.circular(8),
@@ -104,11 +106,14 @@ class _LanguageFormState extends State<LanguageForm> {
                                   child: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          if (selectedLanguages.contains(e) &&
+                                          if (selectedLanguages.contains(
+                                                  languages.indexOf(e)) &&
                                               selectedLanguages.length > 1) {
-                                            selectedLanguages.remove(e);
+                                            selectedLanguages
+                                                .remove(languages.indexOf(e));
                                           } else {
-                                            selectedLanguages.add(e);
+                                            selectedLanguages
+                                                .add(languages.indexOf(e));
                                           }
                                         });
                                       },
@@ -124,7 +129,8 @@ class _LanguageFormState extends State<LanguageForm> {
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color: selectedLanguages
-                                                        .contains(e)
+                                                        .contains(languages
+                                                            .indexOf(e))
                                                     ? const Color(0xFF3DDFCE)
                                                     : const Color(0xFFE5E5E5),
                                                 fontSize: 16,
@@ -134,8 +140,8 @@ class _LanguageFormState extends State<LanguageForm> {
                                               ),
                                             ),
                                             Image(
-                                              image: selectedLanguages
-                                                      .contains(e)
+                                              image: selectedLanguages.contains(
+                                                      languages.indexOf(e))
                                                   ? const AssetImage(
                                                       "assets/check_active.png")
                                                   : const AssetImage(
@@ -195,9 +201,25 @@ class _LanguageFormState extends State<LanguageForm> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       onPressed: () {
-                                        Navigator.of(context).pushNamed(
-                                            "/auth/language-priority-form",
-                                            arguments: selectedLanguages);
+                                        (() async {
+                                          final profileLocal =
+                                              await getProfileLocal();
+
+                                          if (profileLocal != null) {
+                                            await saveProfileLocal(ProfileLocal(
+                                                nickname: profileLocal.nickname,
+                                                age: profileLocal.age,
+                                                gender: profileLocal.gender,
+                                                images: profileLocal.images,
+                                                languages: selectedLanguages
+                                                    .map((e) => e)
+                                                    .toList()));
+                                            if (!mounted) return;
+                                            Navigator.of(context).pushNamed(
+                                                "/auth/language-priority-form",
+                                                arguments: selectedLanguages);
+                                          }
+                                        })();
                                       },
                                       child: const Text(
                                         '다음',

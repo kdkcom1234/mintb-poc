@@ -169,7 +169,8 @@ class _GenderFormState extends State<GenderForm> {
                                     nickname: profileLocal.nickname,
                                     age: profileLocal.age,
                                     gender: selectedGender,
-                                    images: []));
+                                    images: [],
+                                    languages: []));
 
                                 if (!mounted) return;
                                 Navigator.of(context).pushNamed(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/constants.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
 import 'package:mintb_poc_app/screens/card/card_appbar.dart';
 import 'package:mintb_poc_app/screens/card/card_empty.dart';
 import 'package:mintb_poc_app/screens/card/card_filter.dart';
 import 'package:mintb_poc_app/widgets/text_chip.dart';
+
+import '../../firebase/firestore/profile_collection.dart';
 
 class CardMain extends StatefulWidget {
   const CardMain({super.key});
@@ -27,19 +30,28 @@ class _CardMainState extends State<CardMain> {
       "spec": "Surgeon General, 185cm"
     },
   ];
-  var selectedIndex = 1;
+  String? currentProfileId;
+  ProfileLocal? profileLocal;
+  ProfileCollection? profileCard;
+
+  var selectedGender = 1;
   var loading = true;
-  var empty = false;
 
   Future<void> setCard() async {
     setState(() {
       loading = true;
     });
-    final profileLocal = await getProfileLocal();
+
+    profileLocal = await getProfileLocal();
     if (profileLocal != null) {
-      setState(() {
-        selectedIndex = profileLocal.gender == 0 ? 1 : 0;
-      });
+      // log(profileLocal!.gender.toString());
+      selectedGender = profileLocal!.gender == 0 ? 1 : 0;
+      profileCard = await fetchProfileSingleByGender(selectedGender,
+          currentProfileId: currentProfileId);
+
+      if (profileCard != null) {
+        currentProfileId = profileCard!.id;
+      }
     }
 
     setState(() {
@@ -49,7 +61,7 @@ class _CardMainState extends State<CardMain> {
 
   void handleRefreshPressed() {
     setState(() {
-      empty = !empty;
+      profileCard = null;
     });
   }
 
@@ -58,8 +70,15 @@ class _CardMainState extends State<CardMain> {
       builder: (context) => const CardFilter(),
       fullscreenDialog: true,
     ));
+
     setState(() {
-      empty = false;
+      loading = true;
+    });
+
+    profileCard = await fetchProfileSingleByGender(selectedGender);
+
+    setState(() {
+      loading = false;
     });
   }
 
@@ -101,7 +120,7 @@ class _CardMainState extends State<CardMain> {
                   color: const Color(0xFF343434),
                   child: loading
                       ? const SizedBox.shrink()
-                      : empty
+                      : profileCard == null
                           ? CardEmpty(
                               onFilterPressed: handleFilterPressed,
                             )
@@ -119,8 +138,8 @@ class _CardMainState extends State<CardMain> {
                                       height: usableScreenHeight - 51 - 20 - 48,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
-                                          image: AssetImage(
-                                              samples[selectedIndex]["image"]!),
+                                          image: NetworkImage(
+                                              profileCard!.images[0]),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -150,8 +169,7 @@ class _CardMainState extends State<CardMain> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        samples[selectedIndex]
-                                                            ["info"]!,
+                                                        "${profileCard!.nickname}, ${profileCard!.age}",
                                                         style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 24,
@@ -176,7 +194,7 @@ class _CardMainState extends State<CardMain> {
                                                         ),
                                                       ),
                                                       Text(
-                                                        samples[selectedIndex]
+                                                        samples[selectedGender]
                                                             ["spec"]!,
                                                         style: const TextStyle(
                                                           color:
@@ -230,11 +248,11 @@ class _CardMainState extends State<CardMain> {
                                         bottom: 21,
                                         left: 12,
                                         right: 12),
-                                    child: const Column(
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           '내 소개',
                                           style: TextStyle(
                                             color: Color(0xFFB2BABB),
@@ -244,10 +262,10 @@ class _CardMainState extends State<CardMain> {
                                             height: 0,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
-                                        Text(
+                                        const Text(
                                           'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
                                           style: TextStyle(
                                             color: Colors.white,
@@ -257,10 +275,10 @@ class _CardMainState extends State<CardMain> {
                                             height: 0,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 24,
                                         ),
-                                        Text(
+                                        const Text(
                                           '기본 정보',
                                           style: TextStyle(
                                             color: Color(0xFFB2BABB),
@@ -270,10 +288,10 @@ class _CardMainState extends State<CardMain> {
                                             height: 0,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
-                                        Wrap(
+                                        const Wrap(
                                           spacing: 8, // 가로 방향으로의 아이템 간 간격
                                           runSpacing: 12, // 세로 방향으로의 줄 간 간격
                                           children: [
@@ -284,10 +302,10 @@ class _CardMainState extends State<CardMain> {
                                             TextChip("음주는 때때로"),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 24,
                                         ),
-                                        Text(
+                                        const Text(
                                           '내 관심사',
                                           style: TextStyle(
                                             color: Color(0xFFB2BABB),
@@ -297,10 +315,10 @@ class _CardMainState extends State<CardMain> {
                                             height: 0,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
-                                        Wrap(
+                                        const Wrap(
                                           spacing: 8, // 가로 방향으로의 아이템 간 간격
                                           runSpacing: 12, // 세로 방향으로의 줄 간 간격
                                           children: [
@@ -310,10 +328,10 @@ class _CardMainState extends State<CardMain> {
                                             TextChip("영화"),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 24,
                                         ),
-                                        Text(
+                                        const Text(
                                           '구사언어',
                                           style: TextStyle(
                                             color: Color(0xFFB2BABB),
@@ -323,27 +341,26 @@ class _CardMainState extends State<CardMain> {
                                             height: 0,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Wrap(
                                           spacing: 8, // 가로 방향으로의 아이템 간 간격
                                           runSpacing: 12, // 세로 방향으로의 줄 간 간격
-                                          children: [
-                                            TextChip("영어"),
-                                            TextChip("일본어"),
-                                            TextChip("한국어"),
-                                          ],
+                                          children: profileCard!.languages
+                                              .map(
+                                                  (e) => TextChip(languages[e]))
+                                              .toList(),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 29,
                                         ),
                                         Text.rich(
                                           TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: 'Otoo',
-                                                style: TextStyle(
+                                                text: profileCard!.nickname,
+                                                style: const TextStyle(
                                                   color: Color(0xFFFFB74D),
                                                   fontSize: 16,
                                                   fontFamily: 'Pretendard',
@@ -351,8 +368,8 @@ class _CardMainState extends State<CardMain> {
                                                   height: 0,
                                                 ),
                                               ),
-                                              TextSpan(
-                                                text: '님의 위치',
+                                              const TextSpan(
+                                                text: ' 님의 위치',
                                                 style: TextStyle(
                                                   color: Color(0xFFB2BABB),
                                                   fontSize: 16,
@@ -364,10 +381,10 @@ class _CardMainState extends State<CardMain> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
-                                        Wrap(
+                                        const Wrap(
                                           spacing: 8, // 가로 방향으로의 아이템 간 간격
                                           runSpacing: 12, // 세로 방향으로의 줄 간 간격
                                           children: [
@@ -379,25 +396,22 @@ class _CardMainState extends State<CardMain> {
                                   ),
                                   // 추가 이미지 목록
                                   Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/profile_detail_sample_female2_1.png",
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.width,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Image.asset(
-                                        "assets/profile_detail_sample_female2_2.png",
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.width,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ],
-                                  ),
+                                      children: profileCard!.images
+                                          .where((e) =>
+                                              profileCard!.images.indexOf(e) !=
+                                              0)
+                                          .toList()
+                                          .map((e) => Image.network(
+                                                e,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                fit: BoxFit.cover,
+                                              ))
+                                          .toList()),
                                   // 하단 버튼
                                   Padding(
                                     padding: const EdgeInsets.all(16),

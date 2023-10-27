@@ -80,7 +80,8 @@ class _SignInState extends State<SignIn> {
                                     nickname: profile.nickname,
                                     age: profile.age,
                                     gender: profile.gender,
-                                    images: profile.images));
+                                    images: profile.images,
+                                    languages: profile.languages));
                                 // 홈으로 이동
                                 if (!mounted) return;
                                 Navigator.pushAndRemoveUntil(

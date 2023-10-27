@@ -186,7 +186,8 @@ class _NicknameFormState extends State<NicknameForm> {
                                               nickname: nicknameController.text,
                                               age: 0,
                                               gender: 0,
-                                              images: []));
+                                              images: [],
+                                              languages: []));
 
                                           if (!mounted) return;
                                           Navigator.of(context)

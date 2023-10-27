@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/constants.dart';
 
 import '../../widgets/back_nav_button.dart';
 
@@ -12,14 +13,14 @@ class LanguagePriorityForm extends StatefulWidget {
 }
 
 class _LanguagePriorityFormState extends State<LanguagePriorityForm> {
-  List<String> languages = [];
+  List<int> languagesRange = [];
   var selectedLanguages = [];
 
   @override
   Widget build(BuildContext context) {
-    if (languages.isEmpty) {
-      languages = ModalRoute.of(context)!.settings.arguments as List<String>;
-      selectedLanguages.add(languages[0]);
+    if (languagesRange.isEmpty) {
+      languagesRange = ModalRoute.of(context)!.settings.arguments as List<int>;
+      selectedLanguages.add(languagesRange[0]);
     }
 
     return Scaffold(
@@ -80,10 +81,10 @@ class _LanguagePriorityFormState extends State<LanguagePriorityForm> {
                   Padding(
                       padding: const EdgeInsets.only(left: 16, top: 16),
                       child: Column(
-                        children: languages
+                        children: languagesRange
                             .map((e) => Container(
                                   width: MediaQuery.of(context).size.width - 32,
-                                  margin: languages.indexOf(e) == 0
+                                  margin: languagesRange.indexOf(e) == 0
                                       ? const EdgeInsets.only(bottom: 16)
                                       : EdgeInsets.zero,
                                   height: 60,
@@ -125,7 +126,7 @@ class _LanguagePriorityFormState extends State<LanguagePriorityForm> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              e,
+                                              languages[e],
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color: selectedLanguages

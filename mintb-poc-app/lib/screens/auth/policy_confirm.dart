@@ -173,7 +173,8 @@ class _PolicyConfirmState extends State<PolicyConfirm> {
                                     nickname: profileLocal.nickname,
                                     age: profileLocal.age,
                                     gender: profileLocal.gender,
-                                    images: imageUrlList);
+                                    images: imageUrlList,
+                                    languages: profileLocal.languages);
 
                                 // preference 저장
                                 await saveProfileLocal(toSaveProfileLocal);

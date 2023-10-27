@@ -60,7 +60,8 @@ Future<String> loadProfile() async {
           nickname: profile.nickname,
           age: profile.age,
           gender: profile.gender,
-          images: profile.images));
+          images: profile.images,
+          languages: profile.languages));
 
       return "/";
     }

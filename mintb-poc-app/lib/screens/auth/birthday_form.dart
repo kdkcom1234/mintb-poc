@@ -351,7 +351,8 @@ class _BirthdayFormState extends State<BirthdayForm> {
                                         monthController.text,
                                         dayController.text),
                                     gender: 0,
-                                    images: []));
+                                    images: [],
+                                    languages: []));
 
                                 if (!mounted) return;
                                 Navigator.of(context)

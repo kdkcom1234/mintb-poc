@@ -23,7 +23,7 @@ EthPrivateKey _credentials() {
 }
 
 DeployedContract _tokenContract() {
-  return DeployedContract(ContractAbi.fromJson(mintbPocTokenAPI, 'BEP20Token'),
+  return DeployedContract(ContractAbi.fromJson(mintbPocTokenABI, 'BEP20Token'),
       EthereumAddress.fromHex(mintbPocTokenAddress));
 }
 

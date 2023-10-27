@@ -362,7 +362,8 @@ class _ProfileImageRegistrationState extends State<ProfileImageRegistration> {
                                                 gender: profileLocal.gender,
                                                 images: selectedImages
                                                     .map((e) => e!.path)
-                                                    .toList()));
+                                                    .toList(),
+                                                languages: []));
 
                                             log((await getProfileLocal())!
                                                 .toJson()
