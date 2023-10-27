@@ -29,6 +29,8 @@ class _CardMainState extends State<CardMain> {
   PageController pageController = PageController(keepPage: true);
   var currentPage = 0;
 
+  double cardContainerHeight = 0;
+
   void loadCard() async {
     setState(() {
       loading = true;
@@ -46,6 +48,7 @@ class _CardMainState extends State<CardMain> {
       if (profileCards.isNotEmpty) {
         for (final profileCard in profileCards) {
           profileCardList.add(CardContainer(
+            height: cardContainerHeight,
             profileCard: profileCard,
             key: Key(profileCard.id!),
           ));
@@ -56,6 +59,7 @@ class _CardMainState extends State<CardMain> {
         if (currentPage == 0 && profileCards.length == 1) {
           isLast = true;
           profileCardList.add(CardContainer(
+            height: cardContainerHeight,
             key: const Key("empty"),
             onFilterPressed: handleFilterPressed,
           ));
@@ -65,6 +69,7 @@ class _CardMainState extends State<CardMain> {
           // 조회된 데이터가 없을 때
           isLast = true;
           profileCardList.add(CardContainer(
+            height: cardContainerHeight,
             key: const Key("empty"),
             onFilterPressed: handleFilterPressed,
           ));
@@ -84,7 +89,9 @@ class _CardMainState extends State<CardMain> {
       fullscreenDialog: true,
     ));
     currentProfileId = null;
+    currentPage = 0;
     profileCardList.clear();
+    isLast = false;
     loadCard();
   }
 
@@ -101,6 +108,19 @@ class _CardMainState extends State<CardMain> {
     }
   }
 
+  void setCardContainerHeight(BuildContext context) {
+    // 전체 화면 높이
+    double screenHeight = MediaQuery.of(context).size.height;
+    // 상단 상태바 높이
+    double statusBarHeight = MediaQuery.of(context).padding.top;
+    // 하단 버튼 영역 높이 (예: Android의 소프트 키, iPhone의 홈 인디케이터 등)
+    double bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    // 앱 내부영역 - 상단거리 - (탭바사이 + 탭바)
+    cardContainerHeight =
+        screenHeight - statusBarHeight - bottomPadding - 51 - 20 - 48;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -111,6 +131,8 @@ class _CardMainState extends State<CardMain> {
 
   @override
   Widget build(BuildContext context) {
+    setCardContainerHeight(context);
+
     return Scaffold(
       body: Container(
           color: const Color(0xFF343434),

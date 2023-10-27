@@ -6,22 +6,17 @@ import '../../firebase/firestore/profile_collection.dart';
 import '../../widgets/text_chip.dart';
 
 class CardContainer extends StatelessWidget {
-  const CardContainer({super.key, this.profileCard, this.onFilterPressed});
+  const CardContainer(
+      {super.key,
+      this.profileCard,
+      this.onFilterPressed,
+      required this.height});
   final ProfileCollection? profileCard;
   final VoidCallback? onFilterPressed;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    // 전체 화면 높이
-    double screenHeight = MediaQuery.of(context).size.height;
-    // 상단 상태바 높이
-    double statusBarHeight = MediaQuery.of(context).padding.top;
-    // 하단 버튼 영역 높이 (예: Android의 소프트 키, iPhone의 홈 인디케이터 등)
-    double bottomPadding = MediaQuery.of(context).padding.bottom;
-
-    final usableScreenHeight =
-        screenHeight - statusBarHeight - bottomPadding - 51;
-
     final profileCard = this.profileCard;
 
     if (profileCard == null) {
@@ -39,8 +34,7 @@ class CardContainer extends StatelessWidget {
           children: [
             // 메인 프로필
             Container(
-                // 앱 내부영역 - 상단거리 - (탭바사이 + 탭바)
-                height: usableScreenHeight - 51 - 20 - 48,
+                height: height,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(profileCard.images[0]),
