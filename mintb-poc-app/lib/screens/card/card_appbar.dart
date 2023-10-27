@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class CardAppbar extends StatefulWidget {
   const CardAppbar(
       {super.key,
-      required this.onRefreshPressed,
+      required this.onRevertPressed,
       required this.onFilterPressed});
-  final VoidCallback onRefreshPressed;
+  final VoidCallback onRevertPressed;
   final VoidCallback onFilterPressed;
 
   @override
@@ -27,7 +27,7 @@ class _MainAppbarState extends State<CardAppbar> {
         children: [
           InkWell(
             onTap: () {
-              widget.onRefreshPressed();
+              widget.onRevertPressed();
             },
             child: Image.asset(
               "assets/refresh_icon.png",

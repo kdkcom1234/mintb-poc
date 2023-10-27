@@ -59,12 +59,6 @@ class _CardMainState extends State<CardMain> {
     });
   }
 
-  void handleRefreshPressed() {
-    setState(() {
-      profileCard = null;
-    });
-  }
-
   void handleFilterPressed() async {
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const CardFilter(),
@@ -110,7 +104,7 @@ class _CardMainState extends State<CardMain> {
             child: Column(
               children: [
                 CardAppbar(
-                  onRefreshPressed: handleRefreshPressed,
+                  onRevertPressed: () {},
                   onFilterPressed: handleFilterPressed,
                 ),
                 Expanded(
