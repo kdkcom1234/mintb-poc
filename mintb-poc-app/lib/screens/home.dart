@@ -39,6 +39,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: controller,
         children: const [CardMain(), ProfileMain()],
       ),

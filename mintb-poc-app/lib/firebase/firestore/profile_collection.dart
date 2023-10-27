@@ -79,47 +79,55 @@ Future<void> createProfile(ProfileLocal profileLocal) async {
 }
 
 // 성별 프로필 1건 조회
-Future<ProfileCollection?> fetchProfileSingleByGender(int gender,
+Future<List<ProfileCollection>> fetchProfilesPairByGender(int gender,
     {String? currentProfileId}) async {
   log("gender: $gender, current: $currentProfileId");
 
-  final query = FirebaseFirestore.instance
+  // 첫 페이지에만 2개를 로딩한다.
+  // 2번째 페이지부터는 다음 페이지만 로딩한다.
+  var query = FirebaseFirestore.instance
       .collection('profiles')
       .where('gender', isEqualTo: gender)
       .orderBy(FieldPath.documentId)
-      .limit(1);
+      .limit(currentProfileId == null ? 2 : 1);
 
   // 현재 조회된 정보가 있으면
   if (currentProfileId != null) {
-    query.startAfter([currentProfileId]);
+    log("query after: $currentProfileId");
+    query = query.startAfter([currentProfileId]);
   }
 
   // 1건 조회
   final profiles = await query.get();
 
   if (profiles.docs.isEmpty) {
-    return null;
+    return [];
   }
 
-  final profileData = profiles.docs.first.data();
-  final profileId = profiles.docs.first.id;
-  log(profileData.toString());
+  List<ProfileCollection> list = [];
+  for (final doc in profiles.docs) {
+    final profileData = doc.data();
+    final profileId = doc.id;
+    log(profileData.toString());
 
-  final languages = (profileData["languages"] as List<dynamic>)
-      .map((e) => int.parse(e.toString()))
-      .toList();
+    final languages = (profileData["languages"] as List<dynamic>)
+        .map((e) => int.parse(e.toString()))
+        .toList();
 
-  final imagesSnapshot = await FirebaseFirestore.instance
-      .collection('profiles/$profileId/images')
-      .get();
+    final imagesSnapshot = await FirebaseFirestore.instance
+        .collection('profiles/$profileId/images')
+        .get();
 
-  List<String> images = [];
-  for (final image in imagesSnapshot.docs) {
-    log(image.data().toString());
-    images.add(image.data()["url"]);
+    List<String> images = [];
+    for (final image in imagesSnapshot.docs) {
+      log(image.data().toString());
+      images.add(image.data()["url"]);
+    }
+
+    list.add(ProfileCollection(profileData["nickname"], profileData["age"],
+        profileData["gender"], images, languages,
+        id: profileId));
   }
 
-  return ProfileCollection(profileData["nickname"], profileData["age"],
-      profileData["gender"], images, languages,
-      id: profileId);
+  return list;
 }
