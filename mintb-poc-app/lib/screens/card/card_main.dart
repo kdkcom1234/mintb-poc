@@ -26,8 +26,6 @@ class _CardMainState extends State<CardMain> {
   List<CardContainer> profileCardList = [];
 
   var loading = true;
-  var isLast = false;
-
   PageController? pageController;
 
   double cardContainerHeight = 0;
@@ -45,9 +43,9 @@ class _CardMainState extends State<CardMain> {
   }
 
   Future<void> loadCard({String? direction}) async {
-    setState(() {
-      loading = true;
-    });
+    // setState(() {
+    //   loading = true;
+    // });
 
     final emptyContainer = CardContainer(
       height: cardContainerHeight,
@@ -63,9 +61,11 @@ class _CardMainState extends State<CardMain> {
     // 이동한 페이지의 프로필이 없으면(빈페이지)
     if (pageController != null &&
         profileCardList[pageController!.page!.toInt()].profileCard == null) {
+      log("empty page");
       setState(() {
         profileCardList.clear();
         profileCardList.add(emptyContainer);
+        pageController!.removeListener(handlePageChanged);
         pageController!.jumpToPage(0);
       });
       return;
@@ -79,7 +79,7 @@ class _CardMainState extends State<CardMain> {
     filterLocal ??= await getFilterLocal();
 
     // 첫 로딩일 때
-    if (lastTimestamp == null) {
+    if (lastTimestamp == null && profileCardList.isEmpty) {
       // 첫 페이지에만 2개를 로딩한다.
       // 2번째 페이지부터는 다음 페이지만 로딩한다.
       final profileCards = await fetchProfileList(selectedGender,
@@ -89,62 +89,49 @@ class _CardMainState extends State<CardMain> {
 
       // 조회된 데이터가 있을 때
       if (profileCards.isNotEmpty) {
+        final firstCard = CardContainer(
+          height: cardContainerHeight,
+          profileCard: profileCards[0],
+          key: Key(profileCards[0].id!),
+        );
         // 1건만 있을 때(이후 데이터 없음)
         if (profileCards.length == 1) {
-          isLast = true;
-          // 첫번째 데이터로 카드 추가
-          profileCardList.add(CardContainer(
-            height: cardContainerHeight,
-            profileCard: profileCards[0],
-            key: Key(profileCards[0].id!),
-          ));
-          // 앞뒤에 빈페이지 추가
-          profileCardList.add(CardContainer(
-            height: cardContainerHeight,
-            key: const Key("empty"),
-            onFilterPressed: handleFilterPressed,
-          ));
-          profileCardList.insert(
-              0,
-              CardContainer(
-                height: cardContainerHeight,
-                key: const Key("empty"),
-                onFilterPressed: handleFilterPressed,
-              ));
+          setState(() {
+            // 첫번째 데이터로 카드 추가
+            profileCardList.add(firstCard);
+            // 좌우에 빈 페이지 추가
+            profileCardList.add(emptyContainer);
+            profileCardList.insert(0, emptyContainer);
+          });
 
           lastTimestamp = profileCards[0].createdAt;
         }
         // 2건 있을 때 (이후 데이터 있음)
         else if (profileCards.length >= 2) {
-          // 첫번째 데이터로 카드 추가
-          profileCardList.add(CardContainer(
-            height: cardContainerHeight,
-            profileCard: profileCards[0],
-            key: Key(profileCards[0].id!),
-          ));
-          // 앞뒤에 두번째 데이터 추가
-          profileCardList.add(CardContainer(
+          final nextCard = CardContainer(
             height: cardContainerHeight,
             profileCard: profileCards[1],
             key: Key(profileCards[1].id!),
-          ));
-          profileCardList.insert(
-              0,
-              CardContainer(
-                height: cardContainerHeight,
-                profileCard: profileCards[1],
-                key: Key(profileCards[1].id!),
-              ));
+          );
+          setState(() {
+            // 첫번째 데이터로 카드 추가
+            profileCardList.add(firstCard);
+            // 좌우에 다음 페이지 추가
+            profileCardList.add(nextCard);
+            profileCardList.insert(0, nextCard);
+          });
 
           lastTimestamp = profileCards[1].createdAt;
         }
+
         pageController = PageController(keepPage: false, initialPage: 1);
         pageController!.addListener(handlePageChanged);
       }
       // 조회된 데이터가 없을 때
       else {
-        isLast = true;
-        profileCardList.add(emptyContainer);
+        setState(() {
+          profileCardList.add(emptyContainer);
+        });
         pageController = PageController(keepPage: false, initialPage: 0);
       }
     }
@@ -153,6 +140,12 @@ class _CardMainState extends State<CardMain> {
       // 슬라이드 방향 좌우에 더미를 추가한다.
       if (direction == "right") {
         setState(() {
+          // 0 1(현재) 2
+          // ->
+          // 0 1(신규) 2(현재)
+          // 0 1(신규) 2(현재) 3(신규)
+          // 0(삭제) 1(신규) 2(현재) 3(신규)
+          // 0(신규) 1(현재) 2(신규)
           profileCardList[pageController!.page!.toInt() - 1] = dummyContainer;
           profileCardList.add(dummyContainer);
           profileCardList.removeAt(0);
@@ -160,12 +153,19 @@ class _CardMainState extends State<CardMain> {
         });
       } else if (direction == "left") {
         setState(() {
+          // 0 1(현재) 2
+          // <-
+          // 0(현재) 1(신규) 2
+          // 0(신규) 1(현재) 2(신규) 3
+          // 0(신규) 1(현재) 2(신규) 3(삭제)
+          // 0(신규) 1(현재) 2(신규)
           profileCardList[pageController!.page!.toInt() + 1] = dummyContainer;
           profileCardList.insert(0, dummyContainer);
           profileCardList.removeAt(3);
           pageController!.jumpToPage(1);
         });
       }
+
       // 다른 페이지부터는 다음 데이터만 로딩한다.
       final profileCards = await fetchProfileList(selectedGender,
           lastTimestamp: lastTimestamp,
@@ -180,93 +180,22 @@ class _CardMainState extends State<CardMain> {
           key: Key(profileCards[0].id!),
         );
 
-        // 슬라이드 방향이 오른쪽이면
-        if (direction == "right") {
-          // 0 1(현재) 2
-          // ->
-          // 0 1(신규) 2(현재)
-          // 0 1(신규) 2(현재) 3(신규)
-          // 0(삭제) 1(신규) 2(현재) 3(신규)
-          // 0(신규) 1(현재) 2(신규)
-
-          // 왼쪽에 프로필 카드를 신규 카드로 변경
+        setState(() {
+          // 좌우 페이지에 로딩한 프로필 카드 화면 추가
           profileCardList[pageController!.page!.toInt() - 1] = profileCard;
-          // 오른쪽에 프로필 카드 추가
           profileCardList[pageController!.page!.toInt() + 1] = profileCard;
-          // profileCardList.add(profileCard);
-          // // 왼쪽에 가장 마지막 카드 삭제
-          // profileCardList.removeAt(0);
-          // // 1번 페이지로 고정
-          // pageController!.jumpToPage(1);
-        }
-        // 슬라이드 방향이 왼쪽이면
-        else if (direction == "left") {
-          // 0 1(현재) 2
-          // <-
-          // 0(현재) 1(신규) 2
-          // 0(신규) 1(현재) 2(신규) 3
-          // 0(신규) 1(현재) 2(신규) 3(삭제)
-          // 0(신규) 1(현재) 2(신규)
-
-          // 오른쪽에 프로필 카드를 신규 카드로 변경
-          profileCardList[pageController!.page!.toInt() + 1] = profileCard;
-          // 왼쪽에 프로필카드 추가
-          // profileCardList.insert(0, profileCard);
-          profileCardList[0] = profileCard;
-          // // 오른쪽에 가장 마지막 카드 삭제
-          // profileCardList.removeAt(3);
-          // // 1번 페이지로 고정
-          // pageController!.jumpToPage(1);
-        }
-
-        lastTimestamp = profileCards[0].createdAt;
+          lastTimestamp = profileCards[0].createdAt;
+        });
       }
       // 조회된 데이터가 없을 때
       else {
-        isLast = true;
-        // 슬라이드 방향이 오른쪽이면
-        if (direction == "right") {
-          // 0 1(현재) 2
-          // ->
-          // 0 1(빈) 2(현재)
-          // 0 1(빈) 2(현재) 3(빈)
-          // 0(삭제) 1(빈) 2(현재) 3(빈)
-          // 0(빈) 1(현재) 2(빈)
-
-          // 왼쪽에 프로필 카드를 신규 카드로 변경
+        setState(() {
+          // 좌우 페이지에 빈 화면 추가
           profileCardList[pageController!.page!.toInt() - 1] = emptyContainer;
-          // 오른쪽에 프로필 카드 추가
-          profileCardList.add(emptyContainer);
-          // // 왼쪽에 가장 마지막 카드 삭제
-          // profileCardList.removeAt(0);
-          // // 1번 페이지로 고정
-          // pageController!.jumpToPage(1);
-        }
-        // 슬라이드 방향이 왼쪽이면
-        else if (direction == "left") {
-          // 0 1(현재) 2
-          // <-
-          // 0(현재) 1(빈) 2
-          // 0(빈) 1(현재) 2(빈) 3
-          // 0(빈) 1(현재) 2(빈) 3(삭제)
-          // 0(빈) 1(현재) 2(빈)
-
-          // 오른쪽에 프로필 카드를 신규 카드로 변경
           profileCardList[pageController!.page!.toInt() + 1] = emptyContainer;
-          // 왼쪽에 프로필카드 추가
-          profileCardList.insert(0, emptyContainer);
-          // // 오른쪽에 가장 마지막 카드 삭제
-          // profileCardList.removeAt(3);
-          // // 1번 페이지로 고정
-          // pageController!.jumpToPage(1);
-        }
+        });
       }
     }
-
-    log(profileCardList.length.toString());
-    setState(() {
-      loading = false;
-    });
   }
 
   void handleFilterPressed() async {
@@ -280,7 +209,6 @@ class _CardMainState extends State<CardMain> {
       filterLocal = null;
       profileCardList.clear();
     });
-    isLast = false;
     loadCard();
   }
 
