@@ -157,7 +157,7 @@ class _PolicyConfirmState extends State<PolicyConfirm> {
                               final profileLocal = await getProfileLocal();
 
                               if (profileLocal != null) {
-                                log(profileLocal!.toJson().toString());
+                                log(profileLocal.toJson().toString());
 
                                 setState(() {
                                   loading = true;

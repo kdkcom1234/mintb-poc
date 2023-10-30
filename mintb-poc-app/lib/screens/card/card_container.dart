@@ -10,15 +10,28 @@ class CardContainer extends StatelessWidget {
       {super.key,
       this.profileCard,
       this.onFilterPressed,
-      required this.height});
+      required this.height,
+      this.isDummy = false});
   final ProfileCollection? profileCard;
   final VoidCallback? onFilterPressed;
   final double height;
+  final bool isDummy;
 
   @override
   Widget build(BuildContext context) {
     final profileCard = this.profileCard;
 
+    if (isDummy) {
+      return Container(
+        key: const Key("dummy"),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: const Color(0xFF1C1C26),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Column(),
+      );
+    }
     if (profileCard == null) {
       return CardEmpty(onFilterPressed: onFilterPressed!);
     }
@@ -58,7 +71,7 @@ class CardContainer extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "${profileCard.nickname}, ${profileCard!.age}",
+                                  "${profileCard.nickname}, ${profileCard.age}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -220,7 +233,7 @@ class CardContainer extends StatelessWidget {
                   Wrap(
                     spacing: 8, // 가로 방향으로의 아이템 간 간격
                     runSpacing: 12, // 세로 방향으로의 줄 간 간격
-                    children: profileCard!.languages
+                    children: profileCard.languages
                         .map((e) => TextChip(
                               languages[e],
                               key: Key(e.toString()),
@@ -234,7 +247,7 @@ class CardContainer extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: profileCard!.nickname,
+                          text: profileCard.nickname,
                           style: const TextStyle(
                             color: Color(0xFFFFB74D),
                             fontSize: 16,
@@ -271,8 +284,8 @@ class CardContainer extends StatelessWidget {
             ),
             // 추가 이미지 목록
             Column(
-                children: profileCard!.images
-                    .where((e) => profileCard!.images.indexOf(e) != 0)
+                children: profileCard.images
+                    .where((e) => profileCard.images.indexOf(e) != 0)
                     .toList()
                     .map((e) => Image.network(
                           e,

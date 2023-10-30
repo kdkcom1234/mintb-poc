@@ -269,8 +269,8 @@ class _WalletSendReviewState extends State<WalletSendReview> {
                         child: ElevatedButton(
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(EdgeInsets.zero),
-                            backgroundColor:
-                                MaterialStateProperty.all(Color(0xFF1C1C26)),
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xFF1C1C26)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8)),
