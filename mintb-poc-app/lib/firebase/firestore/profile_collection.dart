@@ -96,7 +96,7 @@ Future<List<ProfileCollection>> fetchProfileList(int gender,
   // 나이 필터가 있으면
   if (ageMin != null && ageMax != null) {
     // 범위연산을 <= >= 연산 대신에, IN으로 처리한다.(정렬조건 제약때문)
-    final max = ageMin - ageMax > 30 ? ageMin + 30 : ageMax;
+    final max = ageMax - ageMin > 29 ? ageMin + 29 : ageMax;
     // 기본 나인 30살까지 범위 (IN조건 연산 때문임)
     query =
         query.where("age", whereIn: [for (var i = ageMin; i <= max; i++) i]);
