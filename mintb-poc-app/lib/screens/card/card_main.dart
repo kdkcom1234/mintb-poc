@@ -212,6 +212,16 @@ class _CardMainState extends State<CardMain> {
     loadCard();
   }
 
+  void handleRevertPressed() async {
+    setState(() {
+      lastTimestamp = null;
+      pageController = null;
+      filterLocal = null;
+      profileCardList.clear();
+    });
+    loadCard();
+  }
+
   void handlePageChanged() {
     // log("current: ${currentPage.toDouble()}, page: ${pageController!.page!}");
     // 왼쪽으로 이동
@@ -242,7 +252,7 @@ class _CardMainState extends State<CardMain> {
             child: Column(
               children: [
                 CardAppbar(
-                  onRevertPressed: () {},
+                  onRevertPressed: handleRevertPressed,
                   onFilterPressed: handleFilterPressed,
                 ),
                 Expanded(
