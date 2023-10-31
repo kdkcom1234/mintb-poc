@@ -54,7 +54,7 @@ Future<void> initFirebase() async {
 
 Future<String> loadProfile() async {
   if (getUid() != "") {
-    final profile = await fetchProfileDoc();
+    final profile = await fetchProfile();
     if (profile != null) {
       saveProfileLocal(ProfileLocal(
           nickname: profile.nickname,

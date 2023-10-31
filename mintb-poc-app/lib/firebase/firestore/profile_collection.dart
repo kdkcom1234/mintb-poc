@@ -28,10 +28,10 @@ class ProfileCollection {
 // url : String
 
 // 본인 프로필 조회
-Future<ProfileCollection?> fetchProfileDoc() async {
+Future<ProfileCollection?> fetchProfile({String? id}) async {
   final profileSnapshot = await FirebaseFirestore.instance
       .collection('profiles')
-      .doc("/${getUid()}")
+      .doc("/${id ?? getUid()}")
       .get();
 
   final profileData = profileSnapshot.data();
@@ -43,7 +43,7 @@ Future<ProfileCollection?> fetchProfileDoc() async {
         .toList();
 
     final imagesSnapshot = await FirebaseFirestore.instance
-        .collection('profiles/${getUid()}/images')
+        .collection('profiles/${id ?? getUid()}/images')
         .get();
     // 이미지 목록 변환
     List<String> images = [];
@@ -91,7 +91,7 @@ Future<List<ProfileCollection>> fetchProfileList(int gender,
   var query = FirebaseFirestore.instance
       .collection('profiles')
       .where('gender', isEqualTo: gender)
-      .orderBy("createdAt");
+      .orderBy("createdAt", descending: true);
 
   // 나이 필터가 있으면
   if (ageMin != null && ageMax != null) {

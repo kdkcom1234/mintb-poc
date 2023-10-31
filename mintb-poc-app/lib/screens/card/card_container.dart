@@ -8,18 +8,18 @@ import '../../widgets/text_chip.dart';
 class CardContainer extends StatelessWidget {
   const CardContainer(
       {super.key,
-      this.profileCard,
+      this.profileData,
       this.onFilterPressed,
       required this.height,
       this.isDummy = false});
-  final ProfileCollection? profileCard;
+  final ProfileCollection? profileData;
   final VoidCallback? onFilterPressed;
   final double height;
   final bool isDummy;
 
   @override
   Widget build(BuildContext context) {
-    final profileCard = this.profileCard;
+    final profileData = this.profileData;
 
     if (isDummy) {
       return Container(
@@ -32,12 +32,12 @@ class CardContainer extends StatelessWidget {
         child: const Column(),
       );
     }
-    if (profileCard == null) {
+    if (profileData == null) {
       return CardEmpty(onFilterPressed: onFilterPressed!);
     }
 
     return Container(
-        key: Key(profileCard.id!),
+        key: Key(profileData.id!),
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: const Color(0xFF1C1C26),
@@ -50,7 +50,7 @@ class CardContainer extends StatelessWidget {
                 height: height,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(profileCard.images[0]),
+                    image: NetworkImage(profileData.images[0]),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -65,13 +65,14 @@ class CardContainer extends StatelessWidget {
                         width: MediaQuery.of(context).size.width - 62,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "${profileCard.nickname}, ${profileCard.age}",
+                                  "${profileData.nickname}, ${profileData.age}",
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -88,7 +89,7 @@ class CardContainer extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  profileCard.gender == 0
+                                  profileData.gender == 0
                                       ? "Influencer, 168cm"
                                       : "Surgeon General, 185cm",
                                   style: const TextStyle(
@@ -108,23 +109,25 @@ class CardContainer extends StatelessWidget {
                                 )
                               ],
                             ),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  "assets/check_badge.png",
-                                  width: 20,
-                                  height: 20.15,
-                                ),
-                                const SizedBox(
-                                  width: 9,
-                                ),
-                                Image.asset(
-                                  "assets/profile_badge.png",
-                                  width: 20,
-                                  height: 20.98,
-                                ),
-                              ],
-                            )
+                            Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/check_badge.png",
+                                      width: 20,
+                                      height: 20.15,
+                                    ),
+                                    const SizedBox(
+                                      width: 9,
+                                    ),
+                                    Image.asset(
+                                      "assets/profile_badge.png",
+                                      width: 20,
+                                      height: 20.98,
+                                    ),
+                                  ],
+                                ))
                           ],
                         ),
                       ),
@@ -233,7 +236,7 @@ class CardContainer extends StatelessWidget {
                   Wrap(
                     spacing: 8, // 가로 방향으로의 아이템 간 간격
                     runSpacing: 12, // 세로 방향으로의 줄 간 간격
-                    children: profileCard.languages
+                    children: profileData.languages
                         .map((e) => TextChip(
                               languages[e],
                               key: Key(e.toString()),
@@ -247,7 +250,7 @@ class CardContainer extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: profileCard.nickname,
+                          text: profileData.nickname,
                           style: const TextStyle(
                             color: Color(0xFFFFB74D),
                             fontSize: 16,
@@ -284,8 +287,8 @@ class CardContainer extends StatelessWidget {
             ),
             // 추가 이미지 목록
             Column(
-                children: profileCard.images
-                    .where((e) => profileCard.images.indexOf(e) != 0)
+                children: profileData.images
+                    .where((e) => profileData.images.indexOf(e) != 0)
                     .toList()
                     .map((e) => Image.network(
                           e,

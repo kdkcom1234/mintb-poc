@@ -72,7 +72,7 @@ class _SignInState extends State<SignIn> {
                             // 로그인이 되었으면
                             if (result?.user != null) {
                               // 기존 서버 저장 프로필 조회
-                              final profile = await fetchProfileDoc();
+                              final profile = await fetchProfile();
                               // 기존 서버 저장 프로필이 있을 때
                               if (profile != null) {
                                 // 로컬에 프로필 로드 함

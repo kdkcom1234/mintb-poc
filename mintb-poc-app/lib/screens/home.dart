@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/auction/auction_main.dart';
 import 'package:mintb_poc_app/screens/card/card_main.dart';
 import 'package:mintb_poc_app/screens/profile/profile_main.dart';
 
@@ -31,7 +32,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: 2, vsync: this);
+    controller = TabController(length: 3, vsync: this);
     controller.addListener(handleTabChanging);
   }
 
@@ -41,7 +42,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
-        children: const [CardMain(), ProfileMain()],
+        children: const [CardMain(), AuctionMain(), ProfileMain()],
       ),
       bottomNavigationBar: Container(
         height: 48,
@@ -66,8 +67,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             Expanded(
               flex: 1,
               child: InkWell(
+                onTap: () {
+                  changeTabsIndex(1);
+                },
                 child: Image.asset(
-                  "assets/tabbar_discover_icon.png",
+                  currentIndex == 1
+                      ? "assets/tabbar_discover_icon_active.png"
+                      : "assets/tabbar_discover_icon.png",
                   width: 40,
                   height: 40,
                 ),
@@ -97,10 +103,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               flex: 1,
               child: InkWell(
                 onTap: () {
-                  changeTabsIndex(1);
+                  changeTabsIndex(2);
                 },
                 child: Image.asset(
-                  currentIndex == 1
+                  currentIndex == 2
                       ? "assets/tabbar_profile_icon_active.png"
                       : "assets/tabbar_profile_icon.png",
                   width: 40,
