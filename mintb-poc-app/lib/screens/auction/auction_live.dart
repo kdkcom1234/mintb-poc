@@ -6,8 +6,13 @@ import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
 
 import '../../firebase/firestore/auction_collection.dart';
 
+typedef IntCallback = void Function(int value);
+
 class AuctionLive extends StatefulWidget {
-  const AuctionLive({super.key});
+  const AuctionLive(
+      {super.key, required this.onPageChanged, required this.initPage});
+  final IntCallback onPageChanged;
+  final int initPage;
 
   @override
   State<StatefulWidget> createState() {
@@ -27,6 +32,13 @@ class _AuctionLiveState extends State<AuctionLive> {
     if (auctionList.isNotEmpty) {
       setState(() {
         auctionCardList = auctionList.map((e) => AuctionLiveCard(e)).toList();
+        if (widget.initPage != 0) {
+          pageController.jumpToPage(widget.initPage);
+          loadingPage = widget.initPage;
+          currentPage = loadingPage;
+          widget.onPageChanged(currentPage);
+          loadNextPageProfile();
+        }
       });
 
       // 첫번째 페이지의 프로필을 로딩한다.
@@ -61,10 +73,19 @@ class _AuctionLiveState extends State<AuctionLive> {
       loadingPage = pageController.page!.ceil();
       loadNextPageProfile();
     }
+    // 이전 페이지로 넘어갈 때 로딩되지 않을 프로필이 있으면 로딩한다.
+    if (pageController.page!.floor() < loadingPage) {
+      final index = pageController.page!.floor();
+      if (auctionCardList[index].profileData == null) {
+        loadingPage = pageController.page!.floor();
+        loadNextPageProfile();
+      }
+    }
 
     // 현재페이지번호 상태 업데이트
     setState(() {
       currentPage = pageController.page!.round();
+      widget.onPageChanged(currentPage);
     });
   }
 

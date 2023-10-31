@@ -13,6 +13,11 @@ class AuctionMain extends StatefulWidget {
 
 class _AuctionMainState extends State<AuctionMain> {
   var currentIndex = 0;
+  var currentLivePage = 0;
+
+  void handleLivePageChanged(int page) {
+    currentLivePage = page;
+  }
 
   void changeTabsIndex(int index) {
     setState(() {
@@ -96,7 +101,10 @@ class _AuctionMainState extends State<AuctionMain> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         currentIndex == 0
-                            ? const AuctionLive()
+                            ? AuctionLive(
+                                initPage: currentLivePage,
+                                onPageChanged: handleLivePageChanged,
+                              )
                             : const AuctionMyBid()
                       ],
                     ),
