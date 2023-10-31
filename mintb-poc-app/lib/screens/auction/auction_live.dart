@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
+import 'package:mintb_poc_app/screens/auction/auction_live_profile.dart';
 
 import '../../firebase/firestore/auction_collection.dart';
 
@@ -127,9 +128,19 @@ class _AuctionLiveState extends State<AuctionLive> {
                 width: MediaQuery.of(context).size.width,
                 child: PageView.builder(
                   itemCount: auctionCardList.length,
-                  itemBuilder: (ctx, index) => auctionCardList[index],
+                  itemBuilder: (ctx, index) => InkWell(
+                      onTap: () async {
+                        await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AuctionLiveProfile(
+                              profileData: auctionCardList[index].profileData,
+                              auctionData: auctionCardList[index].auctionData),
+                          fullscreenDialog: true,
+                        ));
+                      },
+                      child: auctionCardList[index]),
                   controller: pageController,
                 ))),
+        // 페이지 인디케이터
         Center(
           child: Container(
             margin: const EdgeInsets.only(top: 20, bottom: 20),
