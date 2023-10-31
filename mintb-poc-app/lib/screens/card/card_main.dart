@@ -25,7 +25,7 @@ class _CardMainState extends State<CardMain> {
   FilterLocal? filterLocal;
   List<CardContainer> profileCardList = [];
 
-  var loading = true;
+  var loading = false;
   PageController? pageController;
 
   double cardContainerHeight = 0;
@@ -49,6 +49,11 @@ class _CardMainState extends State<CardMain> {
       onFilterPressed: handleFilterPressed,
     );
 
+    final dummyContainer = CardContainer(
+      height: cardContainerHeight,
+      isDummy: true,
+    );
+
     // 프로필 정보 조회
     profileLocal ??= await getProfileLocal();
     // 조회 성별을 상대 성별로
@@ -56,8 +61,6 @@ class _CardMainState extends State<CardMain> {
     // 필터 정보 조회
     filterLocal ??= await getFilterLocal();
 
-    // 첫 페이지에만 2개를 로딩한다.
-    // 2번째 페이지부터는 다음 페이지만 로딩한다.
     final profileDataList = await fetchProfileList(selectedGender,
         lastTimestamp: lastTimestamp,
         ageMin: filterLocal?.ageMin,
@@ -70,35 +73,15 @@ class _CardMainState extends State<CardMain> {
         profileData: profileDataList[0],
         key: Key(profileDataList[0].id!),
       );
-      // 1건만 있을 때(이후 데이터 없음)
-      if (profileDataList.length == 1) {
-        setState(() {
-          // 첫번째 데이터로 카드 추가
-          profileCardList.add(firstCard);
-          // 좌우에 빈 페이지 추가
-          profileCardList.add(emptyContainer);
-          profileCardList.insert(0, emptyContainer);
-        });
+      setState(() {
+        // 첫번째 데이터로 카드 추가
+        profileCardList.add(firstCard);
+        // 좌우에 데미 페이지 추가
+        profileCardList.add(dummyContainer);
+        profileCardList.insert(0, dummyContainer);
+      });
 
-        lastTimestamp = profileDataList[0].createdAt;
-      }
-      // 2건 있을 때 (이후 데이터 있음)
-      else if (profileDataList.length >= 2) {
-        final nextCard = CardContainer(
-          height: cardContainerHeight,
-          profileData: profileDataList[1],
-          key: Key(profileDataList[1].id!),
-        );
-        setState(() {
-          // 첫번째 데이터로 카드 추가
-          profileCardList.add(firstCard);
-          // 좌우에 다음 페이지 추가
-          profileCardList.add(nextCard);
-          profileCardList.insert(0, nextCard);
-        });
-
-        lastTimestamp = profileDataList[1].createdAt;
-      }
+      lastTimestamp = profileDataList[0].createdAt;
 
       pageController = PageController(keepPage: false, initialPage: 1);
       pageController!.addListener(handlePageChanged);
@@ -119,59 +102,12 @@ class _CardMainState extends State<CardMain> {
       onFilterPressed: handleFilterPressed,
     );
 
-    final dummyContainer = CardContainer(
-      height: cardContainerHeight,
-      isDummy: true,
-    );
-
-    // 이동한 페이지의 프로필이 없으면(빈페이지)
-    if (pageController != null &&
-        profileCardList[pageController!.page!.toInt()].profileData == null) {
-      log("empty page");
-      setState(() {
-        profileCardList.clear();
-        profileCardList.add(emptyContainer);
-        pageController!.removeListener(handlePageChanged);
-        pageController!.jumpToPage(0);
-      });
-      return;
-    }
-
     // 프로필 정보 조회
     profileLocal ??= await getProfileLocal();
     // 조회 성별을 상대 성별로
     final selectedGender = profileLocal!.gender == 0 ? 1 : 0;
     // 필터 정보 조회
     filterLocal ??= await getFilterLocal();
-
-    // 슬라이드 방향 좌우에 더미를 추가한다.
-    if (direction == "right") {
-      setState(() {
-        // 0 1(현재) 2
-        // ->
-        // 0 1(신규) 2(현재)
-        // 0 1(신규) 2(현재) 3(신규)
-        // 0(삭제) 1(신규) 2(현재) 3(신규)
-        // 0(신규) 1(현재) 2(신규)
-        profileCardList[pageController!.page!.toInt() - 1] = dummyContainer;
-        profileCardList.add(dummyContainer);
-        profileCardList.removeAt(0);
-        pageController!.jumpToPage(1);
-      });
-    } else if (direction == "left") {
-      setState(() {
-        // 0 1(현재) 2
-        // <-
-        // 0(현재) 1(신규) 2
-        // 0(신규) 1(현재) 2(신규) 3
-        // 0(신규) 1(현재) 2(신규) 3(삭제)
-        // 0(신규) 1(현재) 2(신규)
-        profileCardList[pageController!.page!.toInt() + 1] = dummyContainer;
-        profileCardList.insert(0, dummyContainer);
-        profileCardList.removeAt(3);
-        pageController!.jumpToPage(1);
-      });
-    }
 
     // 다른 페이지부터는 다음 데이터만 로딩한다.
     final profileDataList = await fetchProfileList(selectedGender,
@@ -188,18 +124,80 @@ class _CardMainState extends State<CardMain> {
       );
 
       setState(() {
-        // 좌우 페이지에 로딩한 프로필 카드 화면 추가
-        profileCardList[pageController!.page!.toInt() - 1] = profileCard;
-        profileCardList[pageController!.page!.toInt() + 1] = profileCard;
+        // 이동 중인 페이지에 프로필 카드 로드
+        if (direction == "right") {
+          profileCardList[pageController!.page!.ceil()] = profileCard;
+        } else if (direction == "left") {
+          profileCardList[pageController!.page!.floor()] = profileCard;
+        }
+
         lastTimestamp = profileDataList[0].createdAt;
       });
     }
     // 조회된 데이터가 없을 때
     else {
       setState(() {
-        // 좌우 페이지에 빈 화면 추가
-        profileCardList[pageController!.page!.toInt() - 1] = emptyContainer;
-        profileCardList[pageController!.page!.toInt() + 1] = emptyContainer;
+        // 이동중인 페이지에 빈 화면 추가
+        if (direction == "right") {
+          profileCardList[pageController!.page!.ceil()] = emptyContainer;
+        } else if (direction == "left") {
+          profileCardList[pageController!.page!.floor()] = emptyContainer;
+        }
+      });
+    }
+  }
+
+  Future<void> loadSideDummyCard({String? direction}) async {
+    final dummyContainer = CardContainer(
+      height: cardContainerHeight,
+      isDummy: true,
+    );
+
+    final emptyContainer = CardContainer(
+      height: cardContainerHeight,
+      key: const Key("empty"),
+      onFilterPressed: handleFilterPressed,
+    );
+
+    // 이동한 페이지의 프로필이 없으면(빈페이지)
+    if (pageController != null &&
+        profileCardList[pageController!.page!.toInt()].profileData == null) {
+      log("empty page");
+      setState(() {
+        profileCardList.clear();
+        profileCardList.add(emptyContainer);
+        pageController!.removeListener(handlePageChanged);
+        pageController!.jumpToPage(0);
+      });
+      return;
+    }
+
+    // 슬라이드 방향 좌우에 더미를 추가한다.
+    if (direction == "right") {
+      setState(() {
+        // 0 1(현재) 2
+        // ->
+        // 0 1(더미) 2(현재)
+        // 0 1(더미) 2(현재) 3(더미)
+        // 0(삭제) 1(더미) 2(현재) 3(더미)
+        // 0(더미) 1(현재) 2(더미)
+        profileCardList[pageController!.page!.toInt() - 1] = dummyContainer;
+        profileCardList.add(dummyContainer);
+        profileCardList.removeAt(0);
+        pageController!.jumpToPage(1);
+      });
+    } else if (direction == "left") {
+      setState(() {
+        // 0 1(현재) 2
+        // <-
+        // 0(현재) 1(더미) 2
+        // 0(더미) 1(현재) 2(더미) 3
+        // 0(더미) 1(현재) 2(더미) 3(삭제)
+        // 0(더미) 1(현재) 2(더미)
+        profileCardList[pageController!.page!.toInt() + 1] = dummyContainer;
+        profileCardList.insert(0, dummyContainer);
+        profileCardList.removeAt(3);
+        pageController!.jumpToPage(1);
       });
     }
   }
@@ -229,14 +227,24 @@ class _CardMainState extends State<CardMain> {
   }
 
   void handlePageChanged() {
-    // log("current: ${currentPage.toDouble()}, page: ${pageController!.page!}");
-    // 왼쪽으로 이동
-    if (pageController!.page! == 0.0) {
+    // 이동 중일때 다음 프로필 카드 로드
+    if (pageController!.page!.floor() == 0 && !loading) {
+      loading = true;
       loadNextCard(direction: "left");
     }
-    // 오른쪽으로 이동
-    else if (pageController!.page! == 2.0) {
+    if (pageController!.page!.ceil() == 2 && !loading) {
+      loading = true;
       loadNextCard(direction: "right");
+    }
+
+    // 이동 완료면 좌우에 더미카드 로드
+    if (pageController!.page! == 0.0) {
+      loadSideDummyCard(direction: "left");
+      loading = false;
+    }
+    if (pageController!.page! == 2.0) {
+      loadSideDummyCard(direction: "right");
+      loading = false;
     }
   }
 
