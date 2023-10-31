@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
@@ -16,6 +18,8 @@ class AuctionLive extends StatefulWidget {
 class _AuctionLiveState extends State<AuctionLive> {
   List<AuctionLiveCard> auctionCardList = [];
   final pageController = PageController();
+  var loadingPage = 0;
+  var currentPage = 0;
 
   Future<void> setAuctionLiveCards() async {
     final auctionList = await fetchAuctionLiveList();
@@ -24,6 +28,7 @@ class _AuctionLiveState extends State<AuctionLive> {
         auctionCardList = auctionList.map((e) => AuctionLiveCard(e)).toList();
       });
 
+      // 첫번째 페이지의 프로필을 로딩한다.
       final firstCardProfile = await fetchProfile(id: auctionList[0].profileId);
       if (firstCardProfile != null) {
         setState(() {
@@ -36,17 +41,38 @@ class _AuctionLiveState extends State<AuctionLive> {
     }
   }
 
+  Future<void> loadNextPageProfile() async {
+    final profile = await fetchProfile(
+        id: auctionCardList[loadingPage].auctionData.profileId);
+    if (profile != null) {
+      setState(() {
+        auctionCardList[loadingPage] = AuctionLiveCard(
+          auctionCardList[loadingPage].auctionData,
+          profileData: profile,
+        );
+      });
+    }
+  }
+
+  void handlePageChange() {
+    // 다음 페이지로 넘어갈 때 프로필을 로딩한다.
+    if (pageController.page!.ceil() > loadingPage) {
+      log("next");
+      loadingPage = pageController.page!.ceil();
+      loadNextPageProfile();
+    }
+
+    setState(() {
+      currentPage = pageController.page!.round();
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // auctionCardList.addAll([
-    //   const AuctionLiveCard(),
-    //   const AuctionLiveCard(),
-    //   const AuctionLiveCard()
-    // ]);
-
     setAuctionLiveCards();
+    pageController.addListener(handlePageChange);
   }
 
   @override
@@ -63,12 +89,37 @@ class _AuctionLiveState extends State<AuctionLive> {
                   controller: pageController,
                 ))),
         Center(
-            child: Container(
-          width: 200,
-          color: Colors.cyanAccent,
-          margin: const EdgeInsets.only(top: 20, bottom: 20),
-          height: 10,
-        ))
+          child: Container(
+            margin: const EdgeInsets.only(top: 20, bottom: 20),
+            width: MediaQuery.of(context).size.width,
+            height: 10,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: auctionCardList
+                    .map((e) => auctionCardList.indexOf(e))
+                    .map((e) => e == currentPage
+                        ? Container(
+                            width: 10,
+                            height: 10,
+                            decoration: const ShapeDecoration(
+                              color: Color(0xFF3EDFCF),
+                              shape: OvalBorder(),
+                            ),
+                          )
+                        : Container(
+                            width: 10,
+                            height: 10,
+                            decoration: const ShapeDecoration(
+                              color: Color(0xFF1C1C26),
+                              shape: OvalBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFF3EDFCF)),
+                              ),
+                            ),
+                          ))
+                    .toList()),
+          ),
+        )
       ],
     );
   }
