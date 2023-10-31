@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
@@ -57,11 +55,11 @@ class _AuctionLiveState extends State<AuctionLive> {
   void handlePageChange() {
     // 다음 페이지로 넘어갈 때 프로필을 로딩한다.
     if (pageController.page!.ceil() > loadingPage) {
-      log("next");
       loadingPage = pageController.page!.ceil();
       loadNextPageProfile();
     }
 
+    // 현재페이지번호 상태 업데이트
     setState(() {
       currentPage = pageController.page!.round();
     });
@@ -97,26 +95,30 @@ class _AuctionLiveState extends State<AuctionLive> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: auctionCardList
                     .map((e) => auctionCardList.indexOf(e))
-                    .map((e) => e == currentPage
-                        ? Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const ShapeDecoration(
-                              color: Color(0xFF3EDFCF),
-                              shape: OvalBorder(),
+                    .map((e) => Row(
+                          children: [
+                            e != 0
+                                ? const SizedBox(
+                                    width: 8,
+                                  )
+                                : const SizedBox.shrink(),
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: ShapeDecoration(
+                                  color: e == currentPage
+                                      ? const Color(0xFF3EDFCF)
+                                      : const Color(0xFF1C1C26),
+                                  shape: e == currentPage
+                                      ? const OvalBorder()
+                                      : const OvalBorder(
+                                          side: BorderSide(
+                                              width: 1,
+                                              color: Color(0xFF3EDFCF)),
+                                        )),
                             ),
-                          )
-                        : Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const ShapeDecoration(
-                              color: Color(0xFF1C1C26),
-                              shape: OvalBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFF3EDFCF)),
-                              ),
-                            ),
-                          ))
+                          ],
+                        ))
                     .toList()),
           ),
         )
