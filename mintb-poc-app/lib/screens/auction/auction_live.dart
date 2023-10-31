@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
@@ -18,6 +20,7 @@ class _AuctionLiveState extends State<AuctionLive> {
   final pageController = PageController();
   var loadingPage = 0;
   var currentPage = 0;
+  Timer? timer;
 
   Future<void> setAuctionLiveCards() async {
     final auctionList = await fetchAuctionLiveList();
@@ -71,6 +74,26 @@ class _AuctionLiveState extends State<AuctionLive> {
     super.initState();
     setAuctionLiveCards();
     pageController.addListener(handlePageChange);
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (auctionCardList.isNotEmpty) {
+        setState(() {
+          final currentCard = auctionCardList[currentPage];
+          auctionCardList[currentPage] = AuctionLiveCard(
+            currentCard.auctionData,
+            profileData: currentCard.profileData,
+          );
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    super.dispose();
   }
 
   @override
