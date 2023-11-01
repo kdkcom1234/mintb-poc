@@ -144,3 +144,33 @@ Future<List<ProfileCollection>> fetchProfileList(int gender,
 
   return list;
 }
+
+Future<List<ProfileCollection>> fetchProfilesByIds(
+    List<String> profileIds) async {
+  var query = FirebaseFirestore.instance
+      .collection('profiles')
+      .where(FieldPath.documentId, whereIn: profileIds);
+
+  var collection = await query.get();
+
+  List<ProfileCollection> list = [];
+  if (collection.docs.isNotEmpty) {
+    for (final doc in collection.docs) {
+      final imagesSnapshot = await FirebaseFirestore.instance
+          .collection('profiles/${doc.id}/images')
+          .get();
+
+      List<String> images = [];
+      for (final image in imagesSnapshot.docs) {
+        // log(image.data().toString());
+        images.add(image.data()["url"]);
+      }
+
+      list.add(ProfileCollection(
+          doc["nickname"], doc["age"], doc["gender"], images, [],
+          id: doc.id));
+    }
+  }
+
+  return list;
+}

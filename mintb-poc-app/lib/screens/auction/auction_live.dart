@@ -26,7 +26,6 @@ class _AuctionLiveState extends State<AuctionLive> {
   final pageController = PageController();
   var loadingPage = 0;
   var currentPage = 0;
-  Timer? timer;
 
   Future<void> setAuctionLiveCards() async {
     final auctionList = await fetchAuctionLiveList();
@@ -90,13 +89,8 @@ class _AuctionLiveState extends State<AuctionLive> {
     });
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setAuctionLiveCards();
-    pageController.addListener(handlePageChange);
-
+  Timer? timer;
+  void tickTimeRemaining() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (auctionCardList.isNotEmpty) {
         setState(() {
@@ -110,11 +104,34 @@ class _AuctionLiveState extends State<AuctionLive> {
     });
   }
 
+  void handleOpenProfile(int index) async {
+    // 시간 계산 정지
+    timer?.cancel();
+    // 프로필 팝업  띄움
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => AuctionLiveProfile(
+          profileData: auctionCardList[index].profileData,
+          auctionData: auctionCardList[index].auctionData),
+      fullscreenDialog: true,
+    ));
+    // 시간 계산 시작
+    tickTimeRemaining();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setAuctionLiveCards();
+    tickTimeRemaining();
+
+    pageController.addListener(handlePageChange);
+  }
+
   @override
   void dispose() {
-    if (timer != null) {
-      timer!.cancel();
-    }
+    timer?.cancel();
     super.dispose();
   }
 
@@ -129,13 +146,8 @@ class _AuctionLiveState extends State<AuctionLive> {
                 child: PageView.builder(
                   itemCount: auctionCardList.length,
                   itemBuilder: (ctx, index) => InkWell(
-                      onTap: () async {
-                        await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AuctionLiveProfile(
-                              profileData: auctionCardList[index].profileData,
-                              auctionData: auctionCardList[index].auctionData),
-                          fullscreenDialog: true,
-                        ));
+                      onTap: () {
+                        handleOpenProfile(index);
                       },
                       child: auctionCardList[index]),
                   controller: pageController,

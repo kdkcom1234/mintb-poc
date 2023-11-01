@@ -11,6 +11,14 @@ class AuctionCollection {
       {this.id, this.createdAt});
 }
 
+class AuctionBidCollection {
+  String id;
+  final int amount;
+  Timestamp? createdAt;
+
+  AuctionBidCollection(this.amount, {required this.id, this.createdAt});
+}
+
 Future<List<AuctionCollection>> fetchAuctionLiveList() async {
   var query = FirebaseFirestore.instance
       .collection('auctions')
@@ -29,4 +37,22 @@ Future<List<AuctionCollection>> fetchAuctionLiveList() async {
   }
 
   return list;
+}
+
+// Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionMaxBidAmount(
+//     String auctionId) {
+//   return FirebaseFirestore.instance
+//       .collection('auctions/$auctionId/bids')
+//       .orderBy("amount", descending: true)
+//       .limit(1)
+//       .snapshots();
+// }
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
+    String auctionId) {
+  var query = FirebaseFirestore.instance
+      .collection('auctions/$auctionId/bids')
+      .orderBy("amount", descending: true);
+
+  return query.snapshots();
 }
