@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mintb_poc_app/screens/auction/auction_bids.dart';
 import 'package:mintb_poc_app/widgets/card_container.dart';
 import 'package:mintb_poc_app/widgets/closeable_titled_appbar.dart';
@@ -326,8 +327,120 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: 243,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 16),
                             decoration:
                                 const BoxDecoration(color: Color(0xFF1C1C26)),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [10, 30, 50, 100]
+                                      .map((e) => Expanded(
+                                          child: Container(
+                                              height: 32,
+                                              margin: e == 10
+                                                  ? EdgeInsets.zero
+                                                  : const EdgeInsets.only(
+                                                      left: 12),
+                                              decoration: ShapeDecoration(
+                                                color: const Color(0xFF343434),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4)),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '+$e %',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF3EDFCF),
+                                                    fontSize: 12,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w800,
+                                                    height: 0,
+                                                  ),
+                                                ),
+                                              ))))
+                                      .toList(),
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                SizedBox(
+                                  height: 47,
+                                  child: TextField(
+                                    style: const TextStyle(
+                                      color: Color(0xFFE5E5E5),
+                                      fontSize: 16,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: const Color(0xFF343434),
+                                      hintText: "입찰가",
+                                      hintStyle: const TextStyle(
+                                        color: Color(0xFF888888),
+                                        fontSize: 16,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0,
+                                      ), // 배경색
+                                      contentPadding: const EdgeInsets.all(
+                                          12), // 내부 여백 설정 (선택 사항)
+                                      border: InputBorder.none,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 1,
+                                            color: Colors.black), // 활성화 상태 테두리
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 1,
+                                            color: Colors.black), // 포커스 상태 테두리
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
+                                ),
+                                const Expanded(child: SizedBox.expand()),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      // 버튼 클릭 시 수행할 작업
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: const Color(0xFF3EDFCF), // 배경색
+                                      shape: RoundedRectangleBorder(
+                                        // 테두리 둥글기
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '입찰신청',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Color(0xFF343434),
+                                        fontSize: 16,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0,
+                                      ),
+                                    ), // 버튼 텍스트
+                                  ),
+                                )
+                              ],
+                            ),
                           )
                         ],
                       ),
