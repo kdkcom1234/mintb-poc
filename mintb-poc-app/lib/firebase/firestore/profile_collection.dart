@@ -65,9 +65,6 @@ Future<void> createProfile(ProfileLocal profileLocal) async {
   final profileDocRef =
       FirebaseFirestore.instance.collection('profiles').doc("/${getUid()}");
 
-  final imagesRef =
-      FirebaseFirestore.instance.collection('profiles/${getUid()}/images');
-
   // 프로필 저장
   final profileData = profileLocal.toJson();
   profileData.remove("images");
@@ -76,8 +73,11 @@ Future<void> createProfile(ProfileLocal profileLocal) async {
   await profileDocRef.set(profileData);
 
   // 이미지 저장
-  for (final imageUrl in profileLocal.images) {
-    await imagesRef.add({"url": imageUrl});
+  for (final (index, imageUrl) in profileLocal.images.indexed) {
+    final imageDocRef = FirebaseFirestore.instance
+        .collection('profiles/${getUid()}/images')
+        .doc('/${getUid()}-$index');
+    await imageDocRef.set({"url": imageUrl});
   }
 }
 
