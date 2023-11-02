@@ -9,8 +9,14 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
 
-    // 경매에 입찰할 때 포인트 체크
+    // 경매에 입찰정보는 입찰요청정보(bid-requests) -> 트리거로 검증 -> 입찰정보 등록(bids)
+    // 클라이언트 측에서 쓰기 불가
     match /auctions/{auctionId}/bids/{uid} {     
+      allow write: if false;
+    }
+
+    // 경매정보 생성 불가 경매요청정보(auction-requests) -> 관리자검증(poc에서는트리거로) -> 경매정보 등록(auctions)
+    match /auctions/{auctionId} {     
       allow write: if false;
     }
   }
