@@ -10,3 +10,8 @@ firebase deploy --only storage
 ```bash
 firebase deploy --only functions
 ```
+
+-- run emulator
+```bash
+firebase emulators:start
+```
