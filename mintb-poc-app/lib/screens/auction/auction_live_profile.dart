@@ -95,6 +95,7 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
           ranking = 0;
         }
       });
+      loadPoint();
     });
   }
 
@@ -185,7 +186,6 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
 
     final amount = amountController.text.replaceAll(",", "").toDouble().toInt();
     await createAuctionBid(widget.auctionData.id!, amount);
-    await loadPoint();
     setState(() {
       amountController.text = "";
       applyAmount = amount;
