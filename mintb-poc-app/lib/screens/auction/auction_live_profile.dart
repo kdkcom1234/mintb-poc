@@ -68,6 +68,7 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
     auctionBidsSubscription =
         getSnapshotAuctionBids(widget.auctionData.id!).listen((event) {
       setState(() {
+        log("--bid updated--");
         bidsCount = event.docs.length;
         if (event.docs.isNotEmpty) {
           maxBidAmountValue = event.docs.first.data()["amount"];
@@ -90,6 +91,8 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
           }
         } else {
           maxBidAmountValue = 0;
+          showDetail = false;
+          ranking = 0;
         }
       });
     });
@@ -253,95 +256,95 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
                 ],
               ),
               // 입찰하기 버튼
-              !showDetail
-                  ? Positioned(
-                      bottom: 0,
-                      left: 0,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 74,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(28, 28, 38, 0.70),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.50),
-                              blurRadius: 2.0,
-                              offset: const Offset(0, -2),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: handleOpenApplyBid,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3EDFCF), // 배경 색상
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // 모서리 둥글기
-                            ),
-                            textStyle: const TextStyle(
-                                fontFamily: 'Pretendard', // 폰트
-                                fontWeight: FontWeight.w700, // 굵기
-                                fontSize: 16,
-                                height: 0 // 폰트 크기
-                                ),
+              Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: !showDetail
+                      ? Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 74,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(28, 28, 38, 0.70),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.50),
+                                blurRadius: 2.0,
+                                offset: const Offset(0, -2),
+                              ),
+                            ],
                           ),
-                          child: const Text(
-                            '입찰하기',
-                            style: TextStyle(
-                              color: Color(0xFF343434), // 텍스트 색상
-                              height: 0, // 텍스트 높이 (line height)
-                            ),
-                          ),
-                        ),
-                      ))
-                  : Positioned(
-                      bottom: 0,
-                      left: 0,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width, // 100% width
-                        height: 74,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        decoration: const BoxDecoration(
-                          color: Color.fromRGBO(62, 223, 207,
-                              0.5), // Semi-transparent background color
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(
-                                  0, 0, 0, 0.5), // Shadow color with opacity
-                              offset: Offset(0, -2), // x, y offset of shadow
-                              blurRadius: 2.0, // Blur radius of shadow
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
+                          child: ElevatedButton(
+                            onPressed: handleOpenApplyBid,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xFF343434), // Background color
+                              backgroundColor: const Color(0xFF3EDFCF), // 배경 색상
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius:
+                                    BorderRadius.circular(8), // 모서리 둥글기
+                              ),
+                              textStyle: const TextStyle(
+                                  fontFamily: 'Pretendard', // 폰트
+                                  fontWeight: FontWeight.w700, // 굵기
+                                  fontSize: 16,
+                                  height: 0 // 폰트 크기
+                                  ),
+                            ),
+                            child: const Text(
+                              '입찰하기',
+                              style: TextStyle(
+                                color: Color(0xFF343434), // 텍스트 색상
                               ),
                             ),
-                            onPressed: handleOpenBidsDetail,
-                            child: const Text(
-                              '입찰 상세 내역',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF3EDFCF),
-                                fontSize: 16,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
+                          ),
+                        )
+                      : Container(
+                          width:
+                              MediaQuery.of(context).size.width, // 100% width
+                          height: 74,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(62, 223, 207,
+                                0.5), // Semi-transparent background color
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(
+                                    0, 0, 0, 0.5), // Shadow color with opacity
+                                offset: Offset(0, -2), // x, y offset of shadow
+                                blurRadius: 2.0, // Blur radius of shadow
                               ),
-                            )),
-                      )),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color(0xFF343434), // Background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                textStyle: const TextStyle(
+                                    fontFamily: 'Pretendard', // 폰트
+                                    fontWeight: FontWeight.w700, // 굵기
+                                    fontSize: 16,
+                                    height: 0 // 폰트 크기
+                                    ),
+                              ),
+                              onPressed: handleOpenBidsDetail,
+                              child: const Text(
+                                '입찰 상세 내역',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF3EDFCF),
+                                ),
+                              )),
+                        )),
               // 최고 입찰금액
-              !showDetail
-                  ? Positioned(
-                      bottom: 22,
-                      right: 27,
-                      child: Container(
+              Positioned(
+                  bottom: 22,
+                  right: 27,
+                  child: !showDetail
+                      ? Container(
                           height: 30,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: ShapeDecoration(
@@ -361,11 +364,8 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
                                 height: 0,
                               ),
                             ),
-                          )))
-                  : Positioned(
-                      right: 27,
-                      bottom: 22,
-                      child: Container(
+                          ))
+                      : Container(
                           height: 30,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: ShapeDecoration(

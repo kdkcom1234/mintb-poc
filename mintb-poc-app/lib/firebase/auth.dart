@@ -13,7 +13,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 // google-service.json 파일을 다시 받고 덮어 씌우기
 
 Future<UserCredential?> signInWithGoogle(BuildContext context) async {
-  // 개발모드일 때 이메일 인증만 가능
+  // // 개발모드일 때 이메일 인증만 가능
   // if (kDebugMode) {
   //   final userCredential = await FirebaseAuth.instance
   //       .signInWithEmailAndPassword(

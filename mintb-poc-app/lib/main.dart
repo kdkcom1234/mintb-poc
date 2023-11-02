@@ -37,19 +37,13 @@ void main() async {
 
 // 파이어베이스앱 초기화
 Future<void> initFirebase() async {
-  // 개발모드일 때 로컬 에뮬레이터 사용
-  // if (kDebugMode) {
-  //   try {
-  //     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  //     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   log(FirebaseAuth.instance.currentUser.toString());
+
+  // // 개발모드일 때 로컬 에뮬레이터 사용
+  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  // FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
 }
 
 Future<String> loadProfile() async {

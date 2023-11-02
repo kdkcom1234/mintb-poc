@@ -147,6 +147,10 @@ Future<List<ProfileCollection>> fetchProfileList(int gender,
 
 Future<List<ProfileCollection>> fetchProfilesByIds(
     List<String> profileIds) async {
+  if (profileIds.isEmpty) {
+    return [];
+  }
+
   var query = FirebaseFirestore.instance
       .collection('profiles')
       .where(FieldPath.documentId, whereIn: profileIds);

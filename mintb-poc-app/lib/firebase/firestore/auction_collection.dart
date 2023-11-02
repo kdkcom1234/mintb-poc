@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
-import 'package:mintb_poc_app/firebase/firestore/point_collections.dart';
 
 class AuctionCollection {
   String? id;
@@ -49,10 +48,16 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
 }
 
 Future<void> createAuctionBid(String auctionId, int amount) async {
-  await usePoints(amount);
-
-  var docRef =
-      FirebaseFirestore.instance.doc('auctions/$auctionId/bids/${getUid()}');
+  // 서버 사이드 로직 처리(트리거 이용)
+  var docRef = FirebaseFirestore.instance
+      .doc('auctions/$auctionId/bid-requests/${getUid()}');
   await docRef
       .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
+
+  // // 클라이언트 사이드 로직 처리(POC용)
+  // await usePoints(amount);
+  // var docRef = FirebaseFirestore.instance
+  //     .doc('auctions/$auctionId/bids/${getUid()}');
+  // await docRef
+  //     .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
 }
