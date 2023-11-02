@@ -2,7 +2,7 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import { DEFAULT_REGION } from "../../env";
 
-import * as admin from "firebase-admin";
+// import * as admin from "firebase-admin";
 
 export const auctionBidRequestsCreated = onDocumentCreated(
   {
