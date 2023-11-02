@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/firebase/firestore/point_collections.dart';
 
 import '../../preferences/profile_local.dart';
 
@@ -27,18 +26,24 @@ class _ProfileInfoState extends State<ProfileInfo> {
     },
   ];
 
-  ProfileLocal? profile;
-  var loading = true;
-
+  ProfileLocal? _profile;
   Future<void> loadProfile() async {
-    profile = await getProfileLocal();
-    if (profile != null) {
-      log(profile!.toJson().toString());
+    final localProfile = await getProfileLocal();
+    if (localProfile != null) {
+      setState(() {
+        _profile = localProfile;
+      });
     }
+  }
 
-    setState(() {
-      loading = false;
-    });
+  PointCollection? _point;
+  Future<void> loadPoint() async {
+    final point = await fetchPoints();
+    if (point != null) {
+      setState(() {
+        _point = point;
+      });
+    }
   }
 
   @override
@@ -46,6 +51,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
     // TODO: implement initState
     super.initState();
     loadProfile();
+    loadPoint();
   }
 
   @override
@@ -66,8 +72,8 @@ class _ProfileInfoState extends State<ProfileInfo> {
                   shape: OvalBorder(),
                 ),
                 child: Image.network(
-                  profile != null
-                      ? profile!.images[0]
+                  _profile != null
+                      ? _profile!.images[0]
                       : "https://placehold.co/400x400/png",
                   fit: BoxFit.cover,
                   alignment: Alignment.topLeft,
@@ -78,7 +84,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
           Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 8),
             child: Text(
-              profile != null ? '${profile!.nickname}, ${profile!.age}' : "",
+              _profile != null ? '${_profile!.nickname}, ${_profile!.age}' : "",
               style: const TextStyle(
                 color: Color(0xFF3DDFCE),
                 fontSize: 24,
@@ -89,7 +95,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             ),
           ),
           Text(
-            profile != null ? samples[profile!.gender]["spec"]! : "",
+            _profile != null ? samples[_profile!.gender]["spec"]! : "",
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFFDADADA),
@@ -217,10 +223,10 @@ class _ProfileInfoState extends State<ProfileInfo> {
                           )
                         ],
                       ),
-                      const Text(
-                        '4700',
+                      Text(
+                        _point != null ? _point!.mint.toString() : "-",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF3DDFCE),
                           fontSize: 20,
                           fontFamily: 'Inter',

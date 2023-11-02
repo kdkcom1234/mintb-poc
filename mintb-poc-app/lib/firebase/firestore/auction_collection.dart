@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mintb_poc_app/firebase/auth.dart';
+import 'package:mintb_poc_app/firebase/firestore/point_collections.dart';
 
 class AuctionCollection {
   String? id;
@@ -12,8 +14,8 @@ class AuctionCollection {
 }
 
 class AuctionBidCollection {
-  String id;
   final int amount;
+  String id;
   Timestamp? createdAt;
 
   AuctionBidCollection(this.amount, {required this.id, this.createdAt});
@@ -35,24 +37,22 @@ Future<List<AuctionCollection>> fetchAuctionLiveList() async {
         data["profileId"], data["duration"], data["isLive"],
         id: auctionId, createdAt: data["createdAt"]));
   }
-
   return list;
 }
-
-// Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionMaxBidAmount(
-//     String auctionId) {
-//   return FirebaseFirestore.instance
-//       .collection('auctions/$auctionId/bids')
-//       .orderBy("amount", descending: true)
-//       .limit(1)
-//       .snapshots();
-// }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
     String auctionId) {
   var query = FirebaseFirestore.instance
       .collection('auctions/$auctionId/bids')
       .orderBy("amount", descending: true);
-
   return query.snapshots();
+}
+
+Future<void> createAuctionBid(String auctionId, int amount) async {
+  await usePoints(amount);
+
+  var docRef =
+      FirebaseFirestore.instance.doc('auctions/$auctionId/bids/${getUid()}');
+  await docRef
+      .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
 }
