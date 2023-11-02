@@ -280,10 +280,11 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
                               borderRadius: BorderRadius.circular(8), // 모서리 둥글기
                             ),
                             textStyle: const TextStyle(
-                              fontFamily: 'Pretendard', // 폰트
-                              fontWeight: FontWeight.w700, // 굵기
-                              fontSize: 16, // 폰트 크기
-                            ),
+                                fontFamily: 'Pretendard', // 폰트
+                                fontWeight: FontWeight.w700, // 굵기
+                                fontSize: 16,
+                                height: 0 // 폰트 크기
+                                ),
                           ),
                           child: const Text(
                             '입찰하기',
