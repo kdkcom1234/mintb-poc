@@ -4,29 +4,15 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // function checkPoints(amount) {
-    //   // return 4700 >= amount;
-    //   // return true;
-
-    //   // // points 문서 가져오기
-    //   let pointsDoc = get(/databases/$(database)/documents/points/$(request.auth.uid));
-    //   let userMint = pointsDoc.data.mint;
-
-    //   return userMint >= amount;
-    // }
-
     // 모든 경로에 인증 필요
     match /{document=**} {
       allow read, write: if request.auth != null;
     }
 
     // 경매에 입찰할 때 포인트 체크
-    // 보유 포인트보다 입찰 포인트가 작거나 같을 때만 허용
-    // match /auctions/{auctionId}/bids/{uid} {     
-    //   // allow create: if checkPoints(request.resource.data.amount);
-    //   allow create: if false;
-    //   // allow create: if checkPoints(request.resource.data.amount);
-    // }
+    match /auctions/{auctionId}/bids/{uid} {     
+      allow write: if false;
+    }
   }
 }
 

@@ -11,6 +11,12 @@ firebase deploy --only storage
 firebase deploy --only functions
 ```
 
+-- logging functions
+
+```bash
+firebase functions:log --only auctionBidRequestsCreated
+```
+
 -- run emulator
 ```bash
 firebase emulators:start
