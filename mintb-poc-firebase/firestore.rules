@@ -4,16 +4,16 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function checkPoints(amount) {
-      // return 4700 >= amount;
-      // return true;
+    // function checkPoints(amount) {
+    //   // return 4700 >= amount;
+    //   // return true;
 
-      // // points 문서 가져오기
-      let pointsDoc = get(/databases/$(database)/documents/points/$(request.auth.uid));
-      let userMint = pointsDoc.data.mint;
+    //   // // points 문서 가져오기
+    //   let pointsDoc = get(/databases/$(database)/documents/points/$(request.auth.uid));
+    //   let userMint = pointsDoc.data.mint;
 
-      return userMint >= amount;
-    }
+    //   return userMint >= amount;
+    // }
 
     // 모든 경로에 인증 필요
     match /{document=**} {
