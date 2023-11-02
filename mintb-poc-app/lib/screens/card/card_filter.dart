@@ -36,6 +36,10 @@ class _CardFilterState extends State<CardFilter> {
         distanceMax = filter.distanceMax.toDouble();
         loading = false;
       });
+    } else {
+      setState(() {
+        loading = false;
+      });
     }
   }
 
