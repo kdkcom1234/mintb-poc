@@ -2,11 +2,8 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import { DEFAULT_REGION } from "../env";
 
-import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
-
-admin.initializeApp();
-const db = admin.firestore();
+import { db } from "..";
 
 export const auctionBidRequestsCreated = onDocumentCreated(
   {

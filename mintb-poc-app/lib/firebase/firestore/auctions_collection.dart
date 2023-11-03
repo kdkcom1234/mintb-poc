@@ -7,9 +7,10 @@ class AuctionCollection {
   Timestamp? duration;
   Timestamp? createdAt;
   bool isLive;
+  bool? isConfirm;
 
   AuctionCollection(this.profileId, this.duration, this.isLive,
-      {this.id, this.createdAt});
+      {this.id, this.createdAt, this.isConfirm});
 }
 
 class AuctionBidCollection {
@@ -23,6 +24,7 @@ class AuctionBidCollection {
 Future<List<AuctionCollection>> fetchAuctionLiveList() async {
   var query = FirebaseFirestore.instance
       .collection('auctions')
+      .where("isConfirm", isEqualTo: true)
       .where('isLive', isEqualTo: true)
       .orderBy("createdAt", descending: true);
 
