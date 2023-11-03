@@ -1,0 +1,19 @@
+{
+  "name": "42c41ba4-2dc9-48df-a5cc-44619a175187.png",
+  "bucket": "mintb-poc.appspot.com",
+  "metageneration": 1,
+  "generation": 1698984248810,
+  "contentType": "application/octet-stream",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "122de32a-1755-4fac-a09e-2a7db4052861"
+  ],
+  "etag": "GqHcHH+/gl0wq4otgQyLDxc95b4",
+  "customMetadata": {},
+  "timeCreated": "2023-11-03T04:04:08.810Z",
+  "updated": "2023-11-03T04:04:08.810Z",
+  "size": 594204,
+  "md5Hash": "tK2yq8zoC2fZ650EQ2gL6Q==",
+  "crc32c": "1968046868"
+}

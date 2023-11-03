@@ -1,3 +1,2 @@
-export { auctionBidRequestsCreated }
-  from "./modules/triggers/auctionBidRequests";
+export { auctionBidRequestsCreated } from "./triggers/auctionBidRequests";
 // export { todoCreated } from "./modules/triggers/todo";

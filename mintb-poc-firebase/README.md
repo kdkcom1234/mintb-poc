@@ -19,5 +19,5 @@ firebase functions:log --only auctionBidRequestsCreated
 
 -- run emulator
 ```bash
-firebase emulators:start
+firebase emulators:start --import ./localData --export-on-exit
 ```
