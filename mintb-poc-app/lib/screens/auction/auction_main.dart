@@ -19,12 +19,6 @@ class _AuctionMainState extends State<AuctionMain> {
     currentLivePage = page;
   }
 
-  void changeTabsIndex(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,69 +27,53 @@ class _AuctionMainState extends State<AuctionMain> {
             child: SafeArea(
               child: Column(
                 children: [
-                  /* -- 탭 컨트롤 --*/
-                  Container(
-                    width: 176,
-                    height: 40,
-                    margin: const EdgeInsets.only(top: 8),
+                  /* -- 내역 및 신청 버튼 --*/
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 22, left: 12, right: 18, bottom: 18),
                     child: Row(
-                      children: [0, 1]
-                          .map(
-                            (e) => InkWell(
-                              onTap: () {
-                                changeTabsIndex(e);
-                              },
-                              child: Container(
-                                  width: 88,
-                                  height: 40,
-                                  decoration: ShapeDecoration(
-                                    color: currentIndex == e
-                                        ? const Color(0xFF3DDFCE)
-                                        : const Color(0xFF343434),
-                                    shape: RoundedRectangleBorder(
-                                      side: currentIndex == e
-                                          ? BorderSide.none
-                                          : const BorderSide(
-                                              width: 1,
-                                              color: Color(0xFF3EDFCF)),
-                                      borderRadius: e == 0
-                                          ? const BorderRadius.only(
-                                              topLeft: Radius.circular(8),
-                                              bottomLeft: Radius.circular(8),
-                                            )
-                                          : const BorderRadius.only(
-                                              topRight: Radius.circular(8),
-                                              bottomRight: Radius.circular(8),
-                                            ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      e == 0 ? 'Live' : "내 입찰",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: currentIndex == e
-                                            ? const Color(0xFF343434)
-                                            : const Color(0xFF949494),
-                                        fontSize: 16,
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                      ),
-                                    ),
-                                  )),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () {},
+                          child: Image.asset(
+                            "assets/list_button.png",
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {},
+                          child: Container(
+                            width: 88,
+                            height: 40,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFF343434),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    width: 1, color: Color(0xFF3EDFCF)),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                          )
-                          .toList(),
+                            child: const Center(
+                              child: Text(
+                                '경매신청',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF3EDFCF),
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  currentIndex == 0
-                      ? const SizedBox(
-                          height: 32,
-                        )
-                      : const SizedBox(
-                          height: 16,
-                        ),
+                  /* -- 라이브 카드 페이지 --*/
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

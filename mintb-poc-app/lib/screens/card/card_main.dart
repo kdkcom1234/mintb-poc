@@ -8,7 +8,7 @@ import 'package:mintb_poc_app/screens/card/card_appbar.dart';
 import 'package:mintb_poc_app/screens/card/card_filter.dart';
 
 import '../../firebase/firestore/profile_collection.dart';
-import 'sub/card_container.dart';
+import '../../widgets/card_container.dart';
 
 class CardMain extends StatefulWidget {
   const CardMain({super.key});
