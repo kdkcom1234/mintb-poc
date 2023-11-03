@@ -31,8 +31,15 @@ class _AuctionLiveState extends State<AuctionLive> {
     auctionLiveSubscription = getSnapshotAuctionsLive().listen((event) {
       final myAuction =
           event.docs.where((element) => element["profileId"] == getUid());
+      // 내 경매가 추가/수정 되었음
       if (myAuction.isNotEmpty) {
-        setAuctionsLive();
+        final myCard = auctionCardList
+            .where((element) => element.profileData?.id == getUid());
+        // 경매 카드 목록에 내것이 없음
+        if (myCard.isEmpty) {
+          // 카드를 다시 로딩함
+          setAuctionsLive();
+        }
       }
     });
   }
