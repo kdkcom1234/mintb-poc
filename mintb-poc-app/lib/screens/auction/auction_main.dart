@@ -16,8 +16,8 @@ class _AuctionMainState extends State<AuctionMain> {
   var currentIndex = 0;
   var refreshLiveCount = 0;
 
-  void handleAuctionRequest() async {
-    await Navigator.of(context).push(MaterialPageRoute(
+  void handleAuctionRequest() {
+    Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const AuctionRequest(),
       fullscreenDialog: true,
     ));
