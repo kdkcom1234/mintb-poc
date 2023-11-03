@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/firebase/auth.dart';
 import 'package:mintb_poc_app/firebase/firestore/profiles_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_profile.dart';
@@ -23,6 +25,17 @@ class _AuctionLiveState extends State<AuctionLive> {
   final pageController = PageController();
   var loadingPage = 0;
   var currentPage = 0;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+      auctionLiveSubscription;
+  void listenAuctionLive() {
+    auctionLiveSubscription = getSnapshotAuctionsLive().listen((event) {
+      final myAuction =
+          event.docs.where((element) => element["profileId"] == getUid());
+      if (myAuction.isNotEmpty) {
+        setAuctionsLive();
+      }
+    });
+  }
 
   void setAuctionsLive() async {
     final auctionList = await fetchAuctionLiveList();
@@ -114,6 +127,7 @@ class _AuctionLiveState extends State<AuctionLive> {
   @override
   void dispose() {
     timer?.cancel();
+    auctionLiveSubscription?.cancel();
     super.dispose();
   }
 
@@ -124,6 +138,7 @@ class _AuctionLiveState extends State<AuctionLive> {
 
     setAuctionsLive();
     tickTimeRemaining();
+    listenAuctionLive();
 
     pageController.addListener(handlePageChange);
   }
