@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../constants.dart';
+
 // android sha1 키 생성(debug용)
 // keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 
@@ -13,14 +15,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 // google-service.json 파일을 다시 받고 덮어 씌우기
 
 Future<UserCredential?> signInWithGoogle(BuildContext context) async {
-  // // 개발모드일 때 이메일 인증만 가능
-  // if (kDebugMode) {
-  //   final userCredential = await FirebaseAuth.instance
-  //       .signInWithEmailAndPassword(
-  //           email: "kdkcom1234@gmail.com", password: "password1234");
-  //
-  //   return userCredential;
-  // }
+  // 개발모드일 때 이메일 인증만 가능
+  if (isLocalDevelopment) {
+    final userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: localUser.first, password: localUser.last);
+
+    return userCredential;
+  }
 
   // 1. 구글 인증 진행
   // Trigger the authentication flow

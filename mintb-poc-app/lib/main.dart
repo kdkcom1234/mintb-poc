@@ -1,8 +1,11 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/constants.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
 import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
@@ -40,10 +43,12 @@ Future<void> initFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   log(FirebaseAuth.instance.currentUser.toString());
 
-  // // 개발모드일 때 로컬 에뮬레이터 사용
-  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+  if (isLocalDevelopment) {
+    // 로컬 에뮬레이터 사용
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  }
 }
 
 Future<String> loadProfile() async {
