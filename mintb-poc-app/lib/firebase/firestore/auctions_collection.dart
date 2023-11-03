@@ -24,7 +24,6 @@ class AuctionBidCollection {
 Future<List<AuctionCollection>> fetchAuctionLiveList() async {
   var query = FirebaseFirestore.instance
       .collection('auctions')
-      .where("isConfirm", isEqualTo: true)
       .where('isLive', isEqualTo: true)
       .orderBy("createdAt", descending: true);
 
@@ -39,6 +38,14 @@ Future<List<AuctionCollection>> fetchAuctionLiveList() async {
         id: auctionId, createdAt: data["createdAt"]));
   }
   return list;
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionsLive() {
+  var query = FirebaseFirestore.instance
+      .collection('auctions')
+      .where('isLive', isEqualTo: true)
+      .orderBy("createdAt", descending: true);
+  return query.snapshots();
 }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
@@ -62,4 +69,12 @@ Future<void> createAuctionBid(String auctionId, int amount) async {
   //     .doc('auctions/$auctionId/bids/${getUid()}');
   // await docRef
   //     .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionRequestLive(
+    String auctionRequestId) {
+  var query = FirebaseFirestore.instance
+      .collection("auctions")
+      .where("auctionRequestId", isEqualTo: auctionRequestId);
+  return query.snapshots();
 }

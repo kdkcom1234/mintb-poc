@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
 
-import '../../firebase/firestore/profile_collection.dart';
+import '../../firebase/firestore/profiles_collection.dart';
 import '../home.dart';
 
 class SignIn extends StatefulWidget {

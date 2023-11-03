@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live.dart';
 import 'package:mintb_poc_app/screens/auction/auction_mybid.dart';
+import 'package:mintb_poc_app/screens/auction/auction_request.dart';
 
 class AuctionMain extends StatefulWidget {
   const AuctionMain({super.key});
@@ -13,10 +14,19 @@ class AuctionMain extends StatefulWidget {
 
 class _AuctionMainState extends State<AuctionMain> {
   var currentIndex = 0;
-  var currentLivePage = 0;
+  var refreshLiveCount = 0;
 
-  void handleLivePageChanged(int page) {
-    currentLivePage = page;
+  void handleAuctionRequest() async {
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const AuctionRequest(),
+      fullscreenDialog: true,
+    ));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -43,7 +53,7 @@ class _AuctionMainState extends State<AuctionMain> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: handleAuctionRequest,
                           child: Container(
                             width: 88,
                             height: 40,
@@ -78,12 +88,7 @@ class _AuctionMainState extends State<AuctionMain> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        currentIndex == 0
-                            ? AuctionLive(
-                                initPage: currentLivePage,
-                                onPageChanged: handleLivePageChanged,
-                              )
-                            : const AuctionMyBid()
+                        currentIndex == 0 ? AuctionLive() : const AuctionMyBid()
                       ],
                     ),
                   )

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/firebase/firestore/point_collections.dart';
+import 'package:mintb_poc_app/firebase/firestore/points_collections.dart';
 
 import '../../preferences/profile_local.dart';
 

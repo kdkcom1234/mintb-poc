@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
+import 'package:mintb_poc_app/firebase/firestore/profiles_collection.dart';
 import 'package:mintb_poc_app/firebase/storage/files.dart';
 import 'package:mintb_poc_app/screens/home.dart';
 

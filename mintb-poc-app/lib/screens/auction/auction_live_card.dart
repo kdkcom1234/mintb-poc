@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/firebase/firestore/auction_collection.dart';
+import 'package:mintb_poc_app/firebase/firestore/auctions_collection.dart';
 
-import '../../firebase/firestore/profile_collection.dart';
+import '../../firebase/firestore/profiles_collection.dart';
 import '../../utils.dart';
 
 class AuctionLiveCard extends StatelessWidget {

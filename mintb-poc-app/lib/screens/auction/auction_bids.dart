@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../firebase/firestore/auction_collection.dart';
-import '../../firebase/firestore/profile_collection.dart';
+import '../../firebase/firestore/auctions_collection.dart';
+import '../../firebase/firestore/profiles_collection.dart';
 import '../../widgets/closeable_titled_appbar.dart';
 
 class AuctionBids extends StatefulWidget {

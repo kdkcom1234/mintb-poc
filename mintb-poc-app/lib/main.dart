@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/constants.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
-import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
+import 'package:mintb_poc_app/firebase/firestore/profiles_collection.dart';
 import 'package:mintb_poc_app/preferences/profile_local.dart';
 import 'package:mintb_poc_app/screens/auth/birthday_form.dart';
 import 'package:mintb_poc_app/screens/auth/gender_form.dart';

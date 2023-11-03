@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/screens/card/card_empty.dart';
 
 import '../constants.dart';
-import '../firebase/firestore/profile_collection.dart';
+import '../firebase/firestore/profiles_collection.dart';
 import 'text_chip.dart';
 
 class CardContainer extends StatelessWidget {

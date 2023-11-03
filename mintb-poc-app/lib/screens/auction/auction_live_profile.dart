@@ -10,9 +10,9 @@ import 'package:mintb_poc_app/widgets/card_container.dart';
 import 'package:mintb_poc_app/widgets/closeable_titled_appbar.dart';
 
 import '../../firebase/auth.dart';
-import '../../firebase/firestore/auction_collection.dart';
-import '../../firebase/firestore/point_collections.dart';
-import '../../firebase/firestore/profile_collection.dart';
+import '../../firebase/firestore/auctions_collection.dart';
+import '../../firebase/firestore/points_collections.dart';
+import '../../firebase/firestore/profiles_collection.dart';
 import '../../utils.dart';
 
 class AuctionLiveProfile extends StatefulWidget {

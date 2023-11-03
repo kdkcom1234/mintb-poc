@@ -1,19 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mintb_poc_app/firebase/firestore/profile_collection.dart';
+import 'package:mintb_poc_app/firebase/firestore/profiles_collection.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_card.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live_profile.dart';
 
-import '../../firebase/firestore/auction_collection.dart';
+import '../../firebase/firestore/auctions_collection.dart';
 
 typedef IntCallback = void Function(int value);
 
 class AuctionLive extends StatefulWidget {
-  const AuctionLive(
-      {super.key, required this.onPageChanged, required this.initPage});
-  final IntCallback onPageChanged;
-  final int initPage;
+  const AuctionLive({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -27,18 +24,11 @@ class _AuctionLiveState extends State<AuctionLive> {
   var loadingPage = 0;
   var currentPage = 0;
 
-  Future<void> setAuctionLiveCards() async {
+  void setAuctionsLive() async {
     final auctionList = await fetchAuctionLiveList();
     if (auctionList.isNotEmpty) {
       setState(() {
         auctionCardList = auctionList.map((e) => AuctionLiveCard(e)).toList();
-        if (widget.initPage != 0) {
-          pageController.jumpToPage(widget.initPage);
-          loadingPage = widget.initPage;
-          currentPage = loadingPage;
-          widget.onPageChanged(currentPage);
-          loadNextPageProfile();
-        }
       });
 
       // 첫번째 페이지의 프로필을 로딩한다.
@@ -51,6 +41,10 @@ class _AuctionLiveState extends State<AuctionLive> {
           );
         });
       }
+    } else {
+      setState(() {
+        auctionCardList = [];
+      });
     }
   }
 
@@ -85,7 +79,6 @@ class _AuctionLiveState extends State<AuctionLive> {
     // 현재페이지번호 상태 업데이트
     setState(() {
       currentPage = pageController.page!.round();
-      widget.onPageChanged(currentPage);
     });
   }
 
@@ -119,20 +112,20 @@ class _AuctionLiveState extends State<AuctionLive> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    setAuctionLiveCards();
+    setAuctionsLive();
     tickTimeRemaining();
 
     pageController.addListener(handlePageChange);
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   @override
