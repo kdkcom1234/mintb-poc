@@ -32,6 +32,7 @@ export const auctionBidRequestsCreated = onDocumentCreated(
     logger.log("bidCol: ", JSON.stringify(bidCol.docs));
     if (bidCol.docs.length > 0) {
       const maxBidData = bidCol.docs[0].data();
+      logger.log("maxBidData: ", JSON.stringify(maxBidData));
       const maxBidAmount = maxBidData["amount"] as number;
 
       if (amount < maxBidAmount) {

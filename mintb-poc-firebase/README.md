@@ -11,7 +11,7 @@ firebase deploy --only storage
 firebase deploy --only functions
 ```
 
--- logging functions
+-- logging functions(remote)
 
 ```bash
 firebase functions:log --only auctionBidRequestsCreated
@@ -20,4 +20,9 @@ firebase functions:log --only auctionBidRequestsCreated
 -- run emulator
 ```bash
 firebase emulators:start --import ./localData --export-on-exit
+```
+
+-- run emulator with watch mode
+```bash
+./start.sh
 ```
