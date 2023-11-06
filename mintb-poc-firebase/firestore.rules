@@ -1,7 +1,4 @@
 rules_version = '2';
-
-
-
 service cloud.firestore {
   match /databases/{database}/documents {
     // 모든 경로에 인증 필요
@@ -13,6 +10,10 @@ service cloud.firestore {
     // 클라이언트 측에서 쓰기 불가
     match /auctions/{auctionId}/bids/{uid} {     
       allow write: if false;
+    }
+
+    match /auctions/{auctionId}/bid-requests/{uid} {     
+      allow write: if request.auth.uid == uid;
     }
 
     // 경매정보 생성 불가 경매요청정보(auction-requests) -> 관리자검증(poc에서는트리거로) -> 경매정보 등록(auctions)
