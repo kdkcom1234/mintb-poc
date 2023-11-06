@@ -24,9 +24,9 @@ export const auctionRequestsUpdated = onDocumentUpdated(
 
     // 경매를 시작하면 라이브 경매 컬렉션에 추가
     if (isLive) {
-      // 현재 시각을 가져온 후 24시간을 더합니다.
-      const oneDayLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-
+      // 현재 시각을 가져온 후 24시간을 더합니다. (30초 빼고)
+      const now = new Date().getTime();
+      const oneDayLater = new Date(now + 24 * 60 * 60 * 1000 - 30 * 1000);
       const colRef = db.collection("/auctions");
       await colRef.add({
         profileId: data["profileId"],
