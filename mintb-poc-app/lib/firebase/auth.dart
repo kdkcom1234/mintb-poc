@@ -56,7 +56,8 @@ Future<UserCredential?> signInWithGoogle(BuildContext context) async {
 }
 
 Future<void> signOut() async {
-  return await FirebaseAuth.instance.signOut();
+  await GoogleSignIn().signOut();
+  await FirebaseAuth.instance.signOut();
 }
 
 String getUid() {

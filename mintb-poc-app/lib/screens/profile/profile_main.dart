@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/firebase/auth.dart';
+import 'package:mintb_poc_app/screens/auth/sign_in.dart';
 import 'package:mintb_poc_app/screens/profile/profile_info.dart';
 import 'package:mintb_poc_app/screens/profile/wallet_info.dart';
 
@@ -145,7 +147,31 @@ class _ProfileMainState extends State<ProfileMain> {
                               ),
                               selectedTab == 0
                                   ? const ProfileInfo()
-                                  : const WalletInfo()
+                                  : const WalletInfo(),
+                              Expanded(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        await signOut();
+                                        if (context.mounted) {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const SignIn()),
+                                            (Route<dynamic> route) => false,
+                                          );
+                                        }
+                                      },
+                                      child: const Text(
+                                        "Sign out",
+                                        style: TextStyle(color: Colors.white),
+                                      ))
+                                ],
+                              ))
                             ],
                           ),
                         )))
