@@ -19,14 +19,21 @@ class AuctionRequestLive extends StatefulWidget {
 }
 
 class _AuctionRequestLiveState extends State<AuctionRequestLive> {
+  var loading = false;
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? auctionSubscription;
   listenAuctionRequest() {
     auctionSubscription =
         getSnapshotAuctionRequestLive(widget.auctionRequestId).listen((event) {
       if (event.docs.isNotEmpty) {
-        final auctionData = event.docs.first;
+        final data = event.docs.first.data();
+        String auctionId = event.docs.first.id;
+        final auctionData = AuctionCollection(
+            data["profileId"], data["duration"], data["isLive"],
+            id: auctionId, createdAt: data["createdAt"]);
+
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => AuctionLiveDetail(auctionData.id),
+          builder: (context) => AuctionLiveDetail(auctionData),
           fullscreenDialog: true,
         ));
       }
@@ -34,14 +41,11 @@ class _AuctionRequestLiveState extends State<AuctionRequestLive> {
   }
 
   void handleLive() async {
-    await setAuctionRequestLive(widget.auctionRequestId);
-
-    if (context.mounted) {
-      await Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => AuctionLiveDetail(widget.auctionRequestId),
-        fullscreenDialog: true,
-      ));
-    }
+    listenAuctionRequest();
+    setState(() {
+      loading = true;
+    });
+    await liveAuctionRequest(widget.auctionRequestId);
   }
 
   @override
@@ -78,16 +82,21 @@ class _AuctionRequestLiveState extends State<AuctionRequestLive> {
                                 ),
                               ),
                               onPressed: handleLive,
-                              child: const Text(
-                                '경매 시작하기',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF343434),
-                                  fontSize: 16,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                              child: !loading
+                                  ? const Text(
+                                      '경매 시작하기',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Color(0xFF343434),
+                                        fontSize: 16,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    )
+                                  : const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator()),
                             ))
                       ],
                     )

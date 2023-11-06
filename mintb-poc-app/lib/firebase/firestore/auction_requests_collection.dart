@@ -27,7 +27,7 @@ Future<void> removeAuctionRequest(String auctionRequestId) async {
   await docRef.delete();
 }
 
-Future<void> setAuctionRequestLive(String auctionRequestId) async {
+Future<void> liveAuctionRequest(String auctionRequestId) async {
   final docRef =
       FirebaseFirestore.instance.doc("/auction-requests/$auctionRequestId");
   await docRef.get();

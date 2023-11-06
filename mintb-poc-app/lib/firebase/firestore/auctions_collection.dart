@@ -48,6 +48,23 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionsLive() {
   return query.snapshots();
 }
 
+Stream<DocumentSnapshot<Map<String, dynamic>>> getSnapshotAuctionLive(
+    String auctionId) {
+  return FirebaseFirestore.instance.doc('auctions/$auctionId').snapshots();
+}
+
+Future<AuctionCollection?> fetchAuctionLive(String auctionId) async {
+  var doc = await FirebaseFirestore.instance.doc('auctions/$auctionId').get();
+
+  final data = doc.data();
+  if (data == null) {
+    return null;
+  }
+
+  return AuctionCollection(data["profileId"], data["duration"], data["isLive"],
+      id: auctionId, createdAt: data["createdAt"]);
+}
+
 Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
     String auctionId) {
   var query = FirebaseFirestore.instance
@@ -76,5 +93,18 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionRequestLive(
   var query = FirebaseFirestore.instance
       .collection("auctions")
       .where("auctionRequestId", isEqualTo: auctionRequestId);
+  return query.snapshots();
+}
+
+Future<void> upViewCount(String auctionId) async {
+  var docRef =
+      FirebaseFirestore.instance.doc('auctions/$auctionId/views/${getUid()}');
+  await docRef.set({});
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionViews(
+    String auctionId) {
+  var query =
+      FirebaseFirestore.instance.collection('auctions/$auctionId/views');
   return query.snapshots();
 }
