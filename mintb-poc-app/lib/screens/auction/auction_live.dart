@@ -33,12 +33,22 @@ class _AuctionLiveState extends State<AuctionLive> {
           event.docs.where((element) => element["profileId"] == getUid());
       // 내 경매가 추가/수정 되었음
       if (myAuction.isNotEmpty) {
-        final myCard = auctionCardList
-            .where((element) => element.profileData?.id == getUid());
-        // 경매 카드 목록에 내것이 없음
-        if (myCard.isEmpty) {
-          // 카드를 다시 로딩함
+        // 진행 중인 내 경매가 있는데, 카드 목록에 없을 경우 추가 되었으므로 카드를 다시 로딩
+        final liveMyAuction =
+            myAuction.where((element) => element["isLive"] == true);
+        if (liveMyAuction.isNotEmpty) {
+          final myCard = auctionCardList
+              .where((element) => element.profileData?.id == getUid());
+          if (myCard.isEmpty) {
+            setAuctionsLive();
+          }
+        }
+        // 종료된 경매가 있으면 카드를 다시 로딩함
+        final endedMyAuction =
+            myAuction.where((element) => element["isLive"] == false);
+        if (endedMyAuction.isNotEmpty) {
           setAuctionsLive();
+          return;
         }
       }
     });

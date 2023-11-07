@@ -123,7 +123,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
         // log(tick.toString());
       });
 
-      if (tick == 5 && status == 0) {
+      if (tick == 5 && status == 0 && bidsList.isNotEmpty) {
         endAuction(widget.auctionData.id!);
       }
     });
@@ -131,12 +131,8 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
 
   // 경매 상태별 남은 시간/종료 여부 표시
   String displayStatus() {
-    if (status == 1 || status == 2) {
+    if (status >= 1) {
       return "경매 종료";
-    }
-
-    if (status == 9) {
-      return "경매 중지";
     }
 
     return formatDuration(

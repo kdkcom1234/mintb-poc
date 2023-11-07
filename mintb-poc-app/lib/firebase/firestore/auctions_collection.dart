@@ -43,7 +43,6 @@ Future<List<AuctionCollection>> fetchAuctionLiveList() async {
 Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionsLive() {
   var query = FirebaseFirestore.instance
       .collection('auctions')
-      .where('isLive', isEqualTo: true)
       .orderBy("createdAt", descending: true);
   return query.snapshots();
 }
