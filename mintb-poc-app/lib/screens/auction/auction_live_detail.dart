@@ -23,17 +23,56 @@ class AuctionLiveDetail extends StatefulWidget {
 class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
   Timer? timer;
   var tick = 0;
-  var viewCount = 0;
-  var bidsCount = 0;
   var maxBidAmountValue = 0;
+
+  // MTB
+  // maxBidAmount / 1350;
+  double mtbAmountValue() {
+    return (maxBidAmountValue / 1350.0).truncateToDecimalPlaces(4);
+  }
+
+  var viewCount = 0;
+
+  // POP score
+  // 최대입찰mint * 3 + 조회수 * 10
+  // (maxBidAmountValue * 3 + viewCount * 10)
+  int popScore() {
+    return maxBidAmountValue * 3 + viewCount * 10;
+  }
+
+  var bidsCount = 0;
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
       auctionViewSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
       auctionBidsSubscription;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+      auctionStatusSubscription;
   List<AuctionBidCollection> bidsList = [];
   final List<ProfileCollection> profileList = [];
 
+  // 1: 종료, 2: 보상획득 요청, 3: 보상획드 완료
+  var status = 0;
+
+  // 경매 상태 업데이트 대기
+  void listenAuctionStatus() {
+    auctionStatusSubscription =
+        getSnapshotAuction(widget.auctionData.id!).listen((event) {
+      final data = event.data();
+      if (data == null || data.isEmpty) {
+        return;
+      }
+      if (data["status"] == null) {
+        status = 0;
+      } else {
+        setState(() {
+          status = data["status"];
+        });
+      }
+    });
+  }
+
+  // 경매 조회수 업데이트 대기
   void listenAuctionViews() {
     auctionViewSubscription =
         getSnapshotAuctionViews(widget.auctionData.id!).listen((event) {
@@ -74,14 +113,161 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
     });
   }
 
-  void handleStop() async {}
-
   void tickTimeRemaining() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         tick = timer.tick;
+        // log(tick.toString());
       });
     });
+  }
+
+  // 경매 상태별 남은 시간/종료 여부 표시
+  String displayStatus() {
+    if (status == 1 || status == 2) {
+      return "경매 종료";
+    }
+
+    if (status == 9) {
+      return "경매 중지";
+    }
+
+    return formatDuration(
+        widget.auctionData.duration!.toDate().difference(DateTime.now()));
+  }
+
+  Widget displaySpacing() {
+    if ([1, 2].contains(status)) {
+      return const SizedBox(
+        height: 26,
+      );
+    }
+
+    if (status == 3) {
+      return const SizedBox(
+        height: 10,
+      );
+    }
+
+    return const SizedBox(
+      height: 30,
+    );
+  }
+
+  // 조회, 입찰 횟수, 보상 획득하기 버튼 표시
+  Widget displayRewardActionStatus() {
+    // 경매 종료
+    if (status == 1) {
+      return ElevatedButton(
+        onPressed: handleRequestRewards,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFFFB74D),
+          minimumSize: Size(MediaQuery.of(context).size.width, 48),
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text(
+          '보상 획득하기',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xFF343434),
+            fontSize: 16,
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }
+    // 보상 획득 요청
+    if (status == 2) {
+      return ElevatedButton(
+          onPressed: handleRequestRewards,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFFB74D),
+            minimumSize: Size(MediaQuery.of(context).size.width, 48),
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(),
+          ));
+    }
+    // 보상 획득 완료
+    if (status == 3) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // 조회수
+        Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(
+                text: '조회 ',
+                style: TextStyle(
+                  color: Color(0xFFB2BABB),
+                  fontSize: 12,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                ),
+              ),
+              TextSpan(
+                text: viewCount.toString(),
+                style: const TextStyle(
+                  color: Color(0xFF3EDFCF),
+                  fontSize: 12,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(
+                text: '입찰 ',
+                style: TextStyle(
+                  color: Color(0xFFB2BABB),
+                  fontSize: 12,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                ),
+              ),
+              TextSpan(
+                text: bidsCount.toString(),
+                style: const TextStyle(
+                  color: Color(0xFF3EDFCF),
+                  fontSize: 12,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  void handleStop() async {}
+
+  void handleRequestRewards() async {
+    await requestAuctionRewards(widget.auctionData.id!);
   }
 
   @override
@@ -89,6 +275,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
     timer?.cancel();
     auctionViewSubscription?.cancel();
     auctionBidsSubscription?.cancel();
+    auctionStatusSubscription?.cancel();
     super.dispose();
   }
 
@@ -98,6 +285,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
     tickTimeRemaining();
     listenAuctionViews();
     listenAuctionBids();
+    listenAuctionStatus();
   }
 
   @override
@@ -137,10 +325,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            formatDuration(widget
-                                                .auctionData.duration!
-                                                .toDate()
-                                                .difference(DateTime.now())),
+                                            displayStatus(),
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
                                               color: Color(0xFF3EDFCF),
@@ -184,12 +369,9 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                             height: 4,
                                           ),
                                           Text(
-                                            maxBidAmountValue == 0 &&
-                                                    viewCount == 0
+                                            popScore() == 0
                                                 ? "-"
-                                                : (maxBidAmountValue * 3 +
-                                                        viewCount * 10)
-                                                    .toString(),
+                                                : popScore().toString(),
                                             textAlign: TextAlign.right,
                                             style: const TextStyle(
                                               color: Color(0xFF3EDFCF),
@@ -203,7 +385,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                             height: 4,
                                           ),
                                           const Text(
-                                            'POP scroe',
+                                            'POP score',
                                             textAlign: TextAlign.right,
                                             style: TextStyle(
                                               color: Color(0xFFB2BABB),
@@ -281,11 +463,9 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                             height: 4,
                                           ),
                                           Text(
-                                            maxBidAmountValue == 0
+                                            mtbAmountValue() == 0
                                                 ? "-"
-                                                : (maxBidAmountValue / 1350.0)
-                                                    .truncateToDecimalPlaces(4)
-                                                    .toString(),
+                                                : mtbAmountValue().toString(),
                                             textAlign: TextAlign.right,
                                             style: const TextStyle(
                                               color: Color(0xFF3EDFCF),
@@ -314,77 +494,196 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 30,
+                                displaySpacing(),
+                                // 조회, 입찰, 보상 획득하기 버튼
+                                displayRewardActionStatus(),
+                                SizedBox(
+                                  height: status >= 1 ? 16 : 8,
                                 ),
-                                // 조회, 입찰
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    // 조회수
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: '조회 ',
-                                            style: TextStyle(
-                                              color: Color(0xFFB2BABB),
-                                              fontSize: 12,
-                                              fontFamily: 'Pretendard',
-                                              fontWeight: FontWeight.w500,
-                                              height: 0,
+                                // 최고 입찰자
+                                status >= 1
+                                    ? Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 364,
+                                        padding: const EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 19),
+                                        decoration: ShapeDecoration(
+                                          color: const Color(0xFF1C1C26),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 56.84,
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: viewCount.toString(),
-                                            style: const TextStyle(
-                                              color: Color(0xFF3EDFCF),
-                                              fontSize: 12,
-                                              fontFamily: 'Pretendard',
-                                              fontWeight: FontWeight.w500,
-                                              height: 0,
+                                            // 프로필이미지, 1순위
+                                            Stack(
+                                              clipBehavior: Clip.none,
+                                              children: [
+                                                Container(
+                                                  width: 100,
+                                                  height: 99.73,
+                                                  decoration: ShapeDecoration(
+                                                    image: profileList
+                                                            .isNotEmpty
+                                                        ? DecorationImage(
+                                                            image: NetworkImage(
+                                                                profileList[0]
+                                                                    .images[0]),
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : null,
+                                                    shape: const OvalBorder(),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                    left: -3,
+                                                    top: -5.98,
+                                                    child: Container(
+                                                        width: 33,
+                                                        height: 33,
+                                                        decoration:
+                                                            const ShapeDecoration(
+                                                          color:
+                                                              Color(0xFFFFB74D),
+                                                          shape: OvalBorder(),
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            '1st',
+                                                            textAlign:
+                                                                TextAlign.right,
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF1C1C26),
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  'Pretendard',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                        )))
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: '입찰 ',
-                                            style: TextStyle(
-                                              color: Color(0xFFB2BABB),
-                                              fontSize: 12,
-                                              fontFamily: 'Pretendard',
-                                              fontWeight: FontWeight.w500,
-                                              height: 0,
+                                            const SizedBox(
+                                              height: 11.97,
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: bidsCount.toString(),
-                                            style: const TextStyle(
-                                              color: Color(0xFF3EDFCF),
-                                              fontSize: 12,
-                                              fontFamily: 'Pretendard',
-                                              fontWeight: FontWeight.w500,
-                                              height: 0,
+                                            const Text(
+                                              'Kevin',
+                                              style: TextStyle(
+                                                color: Color(0xFFD5DBDB),
+                                                fontSize: 24,
+                                                fontFamily: 'Pretendard',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
+                                            const SizedBox(
+                                              height: 11.97,
+                                            ),
+                                            Text(
+                                              '$maxBidAmountValue m',
+                                              textAlign: TextAlign.right,
+                                              style: const TextStyle(
+                                                color: Color(0xFF3EDFCF),
+                                                fontSize: 24,
+                                                fontFamily: 'Pretendard',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 31.65,
+                                            ),
+                                            Container(
+                                                width: double.infinity,
+                                                height: 48,
+                                                decoration: ShapeDecoration(
+                                                  color:
+                                                      const Color(0xFF3EDFCF),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    '채팅하기',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: Color(0xFF1C1C26),
+                                                      fontSize: 16,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      height: 0,
+                                                    ),
+                                                  ),
+                                                )),
+                                            const SizedBox(
+                                              height: 16,
+                                            ),
+                                            const Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: '연애온도에 따라 최대 ',
+                                                    style: TextStyle(
+                                                      color: Color(0xFFD5DBDB),
+                                                      fontSize: 12,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      height: 0,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: '2000 MTB',
+                                                    style: TextStyle(
+                                                      color: Color(0xFF3EDFCF),
+                                                      fontSize: 12,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      height: 0,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: ' 획득 가능',
+                                                    style: TextStyle(
+                                                      color: Color(0xFFD5DBDB),
+                                                      fontSize: 12,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      height: 0,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                                // 입찰 목록
                                 Expanded(
                                     child: ListView.builder(
-                                        itemCount: bidsList.length,
+                                        itemCount: status >= 1
+                                            ? bidsList.length - 1
+                                            : bidsList.length,
                                         itemBuilder: (ctx, index) => Stack(
                                               children: [
+                                                // 리스트 박스
                                                 Container(
                                                   margin: index != 0
                                                       ? const EdgeInsets.only(
@@ -425,7 +724,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                                                       image: NetworkImage(profileList
                                                                           .firstWhere((e) =>
                                                                               e.id! ==
-                                                                              bidsList[index].id)
+                                                                              bidsList[status >= 1 ? index + 1 : index].id)
                                                                           .images[0]),
                                                                       fit: BoxFit
                                                                           .cover,
@@ -444,7 +743,9 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                                                 ? profileList
                                                                     .firstWhere((e) =>
                                                                         e.id! ==
-                                                                        bidsList[index]
+                                                                        bidsList[status >= 1
+                                                                                ? index + 1
+                                                                                : index]
                                                                             .id)
                                                                     .nickname
                                                                 : "",
@@ -466,7 +767,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                                       Row(
                                                         children: [
                                                           Text(
-                                                            '${bidsList[index].amount} m',
+                                                            '${bidsList[status >= 1 ? index + 1 : index].amount} m',
                                                             textAlign:
                                                                 TextAlign.right,
                                                             style:
@@ -487,7 +788,8 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                                     ],
                                                   ),
                                                 ),
-                                                index == 0
+                                                // 1순위 표시 마커
+                                                status == 0 && index == 0
                                                     ? Positioned(
                                                         top: 7,
                                                         left: 7,

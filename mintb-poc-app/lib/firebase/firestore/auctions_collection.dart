@@ -48,7 +48,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionsLive() {
   return query.snapshots();
 }
 
-Stream<DocumentSnapshot<Map<String, dynamic>>> getSnapshotAuctionLive(
+Stream<DocumentSnapshot<Map<String, dynamic>>> getSnapshotAuction(
     String auctionId) {
   return FirebaseFirestore.instance.doc('auctions/$auctionId').snapshots();
 }
@@ -76,7 +76,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionBids(
 Future<void> createAuctionBid(String auctionId, int amount) async {
   // 서버 사이드 로직 처리(트리거 이용)
   var docRef = FirebaseFirestore.instance
-      .doc('auctions/$auctionId/bid-requests/${getUid()}');
+      .doc('/auctions/$auctionId/bid-requests/${getUid()}');
   await docRef
       .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
 
@@ -107,4 +107,9 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionViews(
   var query =
       FirebaseFirestore.instance.collection('auctions/$auctionId/views');
   return query.snapshots();
+}
+
+Future<void> requestAuctionRewards(String auctionId) async {
+  var docRef = FirebaseFirestore.instance.doc('auctions/$auctionId');
+  await docRef.set({"status": 2}, SetOptions(merge: true));
 }

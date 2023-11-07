@@ -1,8 +1,8 @@
 const languages = ["영어", "한국어"];
 
 /* --- 개발환경 --- */
-// const isLocalDevelopment = true;
-const isLocalDevelopment = false;
+const isLocalDevelopment = true;
+// const isLocalDevelopment = false;
 
 /* --- 에뮬레이터 로컬유저 --- */
 // 여자: Otoo
