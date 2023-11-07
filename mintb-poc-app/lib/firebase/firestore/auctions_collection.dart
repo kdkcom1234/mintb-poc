@@ -109,6 +109,11 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionViews(
   return query.snapshots();
 }
 
+Future<void> endAuction(String auctionId) async {
+  var docRef = FirebaseFirestore.instance.doc('auctions/$auctionId');
+  await docRef.set({"status": 1, "isLive": false}, SetOptions(merge: true));
+}
+
 Future<void> requestAuctionRewards(String auctionId) async {
   var docRef = FirebaseFirestore.instance.doc('auctions/$auctionId');
   await docRef.set({"status": 2}, SetOptions(merge: true));

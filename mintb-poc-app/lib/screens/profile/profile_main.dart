@@ -152,24 +152,43 @@ class _ProfileMainState extends State<ProfileMain> {
                                   child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  TextButton(
-                                      onPressed: () async {
-                                        await signOut();
-                                        if (context.mounted) {
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        const SignIn()),
-                                            (Route<dynamic> route) => false,
-                                          );
-                                        }
-                                      },
-                                      child: const Text(
-                                        "Sign out",
-                                        style: TextStyle(color: Colors.white),
-                                      ))
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await signOut();
+                                      if (context.mounted) {
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  const SignIn()),
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(
+                                          0xFF1C1C26), // Button background color
+                                      fixedSize:
+                                          const Size(328, 50), // Button size
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8), // Button corner radius
+                                      ),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    child: const Text(
+                                      '로그아웃',
+                                      style: TextStyle(
+                                        color: Color(0xFF3EDFCF),
+                                        fontSize: 16,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  )
                                 ],
                               ))
                             ],

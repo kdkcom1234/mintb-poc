@@ -69,6 +69,9 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
           status = data["status"];
         });
       }
+      if (status == 3) {
+        displayRewardsDialog(data["pop"], data["mint"], data["mtb"]);
+      }
     });
   }
 
@@ -119,6 +122,10 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
         tick = timer.tick;
         // log(tick.toString());
       });
+
+      if (tick == 5 && status == 0) {
+        endAuction(widget.auctionData.id!);
+      }
     });
   }
 
@@ -268,6 +275,228 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
 
   void handleRequestRewards() async {
     await requestAuctionRewards(widget.auctionData.id!);
+  }
+
+  void displayRewardsDialog(int pop, int mint, double mtb) {
+    log(status.toString());
+    log("$pop $mint, $mtb");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          elevation: 0, // 기본 그림자 제거
+          backgroundColor: Colors.transparent, // 백그라운드 색상 설정
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width, // 원하는 너비
+            height: MediaQuery.of(context).size.height, // 원하는 높이
+            child: Center(
+              child: Container(
+                width: 300,
+                height: 363,
+                padding: const EdgeInsets.only(
+                    top: 24, left: 16, right: 16, bottom: 16),
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF1C1C26),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      '보상 획득 완료',
+                      style: TextStyle(
+                        color: Color(0xFF25ECD7),
+                        fontSize: 16,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              padding: const EdgeInsets.all(7.33),
+                              decoration: const ShapeDecoration(
+                                color: Color(0xFF343434),
+                                shape: OvalBorder(),
+                              ),
+                              child: Image.asset(
+                                "assets/pop_score_icon.png",
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                            const Text(
+                              'POP scroe',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Color(0xFFB2BABB),
+                                fontSize: 16,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          pop.toString(),
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            color: Color(0xFF3EDFCF),
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              padding: const EdgeInsets.all(14),
+                              decoration: const ShapeDecoration(
+                                color: Color(0xFF343434),
+                                shape: OvalBorder(),
+                              ),
+                              child: Image.asset(
+                                "assets/mint_icon.png",
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                            const Text(
+                              'mint',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Color(0xFFB2BABB),
+                                fontSize: 16,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          mint.toString(),
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            color: Color(0xFF3EDFCF),
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              padding: const EdgeInsets.all(0),
+                              decoration: const ShapeDecoration(
+                                color: Color(0xFF343434),
+                                shape: OvalBorder(),
+                              ),
+                              child: Image.asset(
+                                "assets/mtb_ticker_icon.png",
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                            const Text(
+                              '\$MTB',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Color(0xFFB2BABB),
+                                fontSize: 16,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          mtb.toString(),
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            color: Color(0xFF3EDFCF),
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xFF25ECD7), // Button background color// Button text color
+                        minimumSize:
+                            const Size(double.infinity, 48), // Button size
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8), // Button corner radius
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                          color: Color(0xFF343434),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
