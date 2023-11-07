@@ -1,10 +1,10 @@
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import { DEFAULT_REGION } from "../env";
 import { db } from "..";
-import { servicePrivateKey } from '../keys/privateKey';
-import { mintbPocTokenABI, mintbPocTokenAddress } from '../offchain';
+import { servicePrivateKey } from "../keys/privateKey";
+import { mintbPocTokenABI, mintbPocTokenAddress } from "../offchain";
 
 export const auctionStatusUpdated = onDocumentUpdated(
   {
@@ -42,11 +42,15 @@ export const auctionStatusUpdated = onDocumentUpdated(
       const privateKey = servicePrivateKey;
       const tokenAddress = mintbPocTokenAddress;
       // 테스트주소 고정
-      const toAddress = '0x98f32f758089ed9412eb8e2c560f4b94678c0d87';
-      const amountToSend = ethers.parseUnits(mtbAmount, 'ether'); // BEP-20 토큰의 decimals에 따라 변경할 수 있습니다.
+      const toAddress =
+        "0x98f32f758089ed9412eb8e2c560f4b94678c0d87";
+      // BEP-20 토큰의 decimals에 따라 변경할 수 있습니다.
+      const amountToSend =
+        ethers.parseUnits(mtbAmount, "ether");
 
       // BNB Chain의 주소 및 ABI 세부 정보를 구성합니다.
-      const bscTestnetUrl = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
+      const bscTestnetUrl =
+        "https://data-seed-prebsc-1-s1.binance.org:8545/";
       const provider = new ethers.JsonRpcProvider(bscTestnetUrl);
 
       // 비공개 키를 사용하여 Signer 객체를 생성합니다.
@@ -60,28 +64,30 @@ export const auctionStatusUpdated = onDocumentUpdated(
 
       // 토큰을 전송하고 트랜잭션 수신을 기다립니다.
       const tx = await tokenContract.transfer(toAddress, amountToSend);
-      logger.log('Transaction hash:', tx.hash);
+      logger.log("Transaction hash:", tx.hash);
 
       // 트랜잭션 영수증을 기다립니다 (선택사항).
       const receipt = await tx.wait();
-      logger.log('Transaction confirmed:', receipt);
+      logger.log("Transaction confirmed:", receipt);
 
       // ----- POP 점수 추가
       const pointDocRef = db.doc(`/points/${data["profileId"]}`);
       const point = await pointDocRef.get();
       const pointData = point.data();
       if (pointData) {
-        const popCurrentScore = pointData["pop"] ? pointData["pop"] as number : 0;
-        const mintCurrent = pointData["min"] ? pointData["mint"] as number : 0;
+        const popCurrentScore =
+          pointData["pop"] ? pointData["pop"] as number : 0;
+        const mintCurrent =
+          pointData["min"] ? pointData["mint"] as number : 0;
         await pointDocRef.set({
           pop: popCurrentScore + popAmount,
-          mint: mintCurrent + maxBidAmount
-        }, { merge: true })
+          mint: mintCurrent + maxBidAmount,
+        }, { merge: true });
       } else {
         await pointDocRef.set({
           pop: popAmount,
-          mint: maxBidAmount
-        })
+          mint: maxBidAmount,
+        });
       }
 
       // ----- 상태 변경(2 -> 3), 리워드 정보 추가 -----
@@ -90,7 +96,7 @@ export const auctionStatusUpdated = onDocumentUpdated(
         status: 3,
         pop: popAmount,
         mint: maxBidAmount,
-        mtb: +mtbAmount
+        mtb: +mtbAmount,
       }, { merge: true });
     }
   }
