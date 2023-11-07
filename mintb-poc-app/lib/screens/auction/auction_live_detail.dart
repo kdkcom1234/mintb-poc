@@ -805,9 +805,11 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                             const SizedBox(
                                               height: 11.97,
                                             ),
-                                            const Text(
-                                              'Kevin',
-                                              style: TextStyle(
+                                            Text(
+                                              profileList.isNotEmpty
+                                                  ? profileList[0].nickname
+                                                  : "-",
+                                              style: const TextStyle(
                                                 color: Color(0xFFD5DBDB),
                                                 fontSize: 24,
                                                 fontFamily: 'Pretendard',
