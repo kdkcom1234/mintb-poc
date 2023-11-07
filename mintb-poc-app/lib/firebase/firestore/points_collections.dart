@@ -5,8 +5,9 @@ import '../auth.dart';
 class PointCollection {
   String? id;
   int mint;
+  int? pop;
 
-  PointCollection({required this.mint, this.id});
+  PointCollection({required this.mint, this.id, this.pop});
 }
 
 Future<PointCollection?> fetchPoints() async {
@@ -16,25 +17,11 @@ Future<PointCollection?> fetchPoints() async {
       .get();
 
   if (pointDoc.exists && pointDoc.data() != null) {
-    return PointCollection(mint: pointDoc.data()!["mint"], id: pointDoc.id);
+    return PointCollection(
+        mint: pointDoc.data()!["mint"] ?? 0,
+        id: pointDoc.id,
+        pop: pointDoc.data()!["pop"]);
   }
 
   return null;
-}
-
-Future<Record> usePoints(int amount) async {
-  final pointData = await fetchPoints();
-  if (pointData == null || pointData!.mint == 0) {
-    return (false, "no points");
-  }
-
-  if (pointData.mint - amount < 0) {
-    return (false, "not enough points");
-  }
-
-  final pointRef =
-      FirebaseFirestore.instance.collection('points').doc("/${getUid()}");
-
-  await pointRef.set({"mint": pointData!.mint - amount});
-  return (false, "no point");
 }

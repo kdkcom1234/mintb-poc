@@ -141,13 +141,13 @@ class _ProfileInfoState extends State<ProfileInfo> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Hot Score',
+                        const Text(
+                          'Pop Score',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Color(0xFFDADADA),
@@ -158,9 +158,11 @@ class _ProfileInfoState extends State<ProfileInfo> {
                           ),
                         ),
                         Text(
-                          '2700',
+                          _point == null || _point?.pop == null
+                              ? "-"
+                              : _point!.pop!.toString(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFFDE5854),
                             fontSize: 20,
                             fontFamily: "Pretendard",
@@ -224,7 +226,9 @@ class _ProfileInfoState extends State<ProfileInfo> {
                         ],
                       ),
                       Text(
-                        _point != null ? _point!.mint.toString() : "-",
+                        _point == null || _point?.mint == 0
+                            ? "-"
+                            : _point!.mint.toString(),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF3DDFCE),
