@@ -4,7 +4,7 @@ const languages = ["영어", "한국어"];
 
 /* --- 개발환경 --- */
 // const isLocalDevelopment = true;
-const isLocalDevelopment = true;
+const isLocalDevelopment = false;
 
 /* --- 에뮬레이터 로컬유저 --- */
 // 여자: Otoo
@@ -24,5 +24,5 @@ String apiBase() {
     return "http://127.0.0.1:5001/mintb-poc/asia-northeast3/api";
   }
 
-  return "http://10.0.2.2:5001/mintb-poc/asia-northeast3/api";
+  return "https://api-umyzvomuda-du.a.run.app";
 }

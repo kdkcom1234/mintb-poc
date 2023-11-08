@@ -22,6 +22,7 @@ class ProfileMain extends StatefulWidget {
 class _ProfileMainState extends State<ProfileMain> {
   final tabs = ["profile", "wallet"];
   var selectedTab = 0;
+  var isPurchasePending = false;
 
   var isPurchaseMint = false;
   void handleOpenPurchaseMint() {
@@ -42,6 +43,9 @@ class _ProfileMainState extends State<ProfileMain> {
     log(idToken!);
 
     try {
+      setState(() {
+        isPurchasePending = true;
+      });
       // HTTP 요청을 보냅니다.
       final response = await http.post(
           // 클라우드 함수의 URL을 지정합니다.
@@ -53,7 +57,6 @@ class _ProfileMainState extends State<ProfileMain> {
           body: {
             "amount": amount.toString()
           });
-
       // 결과를 처리합니다.
       if (response.statusCode == 200) {
         // 성공적으로 함수를 호출하고 응답을 받았습니다.
@@ -69,6 +72,7 @@ class _ProfileMainState extends State<ProfileMain> {
       Fluttertoast.showToast(msg: 'Error calling function: $e');
     } finally {
       setState(() {
+        isPurchasePending = false;
         isPurchaseMint = false;
       });
     }
@@ -373,31 +377,46 @@ class _ProfileMainState extends State<ProfileMain> {
                                     ),
                                   ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        displayMintItem(1, 0.99),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        displayMintItem(10, 9.99)
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      children: [
-                                        displayMintItem(50, 49.99),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        displayMintItem(100, 99.99),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                child: !isPurchasePending
+                                    ? Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              displayMintItem(1, 0.99),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              displayMintItem(10, 9.99)
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            children: [
+                                              displayMintItem(50, 49.99),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              displayMintItem(100, 99.99),
+                                            ],
+                                          )
+                                        ],
+                                      )
+                                    : const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Center(
+                                            child: SizedBox(
+                                              width: 40,
+                                              height: 40,
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                               ),
                             ],
                           )))
