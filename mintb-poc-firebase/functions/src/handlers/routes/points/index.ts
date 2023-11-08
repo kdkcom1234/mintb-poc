@@ -1,10 +1,10 @@
-import * as express from "express";
+import { Router as router } from "express";
 import { logger } from "firebase-functions/v2";
 import { RequestWithUser } from "../../middleware/auth";
 import { db } from "../../../admin";
 
-const points = express.Router();
-points.post('/mint/purchase', async (req: RequestWithUser, res) => {
+const points = router();
+points.post("/mint/purchase", async (req: RequestWithUser, res) => {
   logger.log(req.headers.authorization);
   logger.log(req.user?.uid);
   logger.log(req.body);
@@ -21,7 +21,7 @@ points.post('/mint/purchase', async (req: RequestWithUser, res) => {
 
   if (!pointData) {
     await pointDocRef.set({ mint: amount });
-    res.send('purchase success');
+    res.send("purchase success");
     return;
   }
 
@@ -30,12 +30,12 @@ points.post('/mint/purchase', async (req: RequestWithUser, res) => {
 
   if (!mintAmount) {
     await pointDocRef.set({ mint: amount }, { merge: true });
-    res.send('purchase success');
+    res.send("purchase success");
     return;
   }
 
   await pointDocRef.set({ mint: mintAmount + amount }, { merge: true });
-  res.send('purchase success');
+  res.send("purchase success");
 });
 
 export default points;
