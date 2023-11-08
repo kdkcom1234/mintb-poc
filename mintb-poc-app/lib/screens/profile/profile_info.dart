@@ -1,10 +1,14 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/firebase/firestore/points_collections.dart';
 
 import '../../preferences/profile_local.dart';
 
 class ProfileInfo extends StatefulWidget {
-  const ProfileInfo({super.key});
+  const ProfileInfo({super.key, required this.onPurchaseMint});
+  final VoidCallback onPurchaseMint;
 
   @override
   State<StatefulWidget> createState() {
@@ -36,22 +40,36 @@ class _ProfileInfoState extends State<ProfileInfo> {
     }
   }
 
-  PointCollection? _point;
-  Future<void> loadPoint() async {
-    final point = await fetchPoints();
-    if (point != null) {
-      setState(() {
-        _point = point;
-      });
-    }
+  PointCollection _point = PointCollection(mint: 0, pop: 0);
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+      pointsSubscription;
+  void listenPoints() {
+    pointsSubscription = getSnapshotPoints().listen((event) {
+      if (event.data() != null) {
+        final pointData = event.data();
+        setState(() {
+          _point = PointCollection(
+              mint: pointData!["mint"] ?? 0, pop: pointData["pop"]);
+        });
+      } else {
+        setState(() {
+          _point = PointCollection(mint: 0, pop: 0);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    pointsSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     loadProfile();
-    loadPoint();
+    listenPoints();
   }
 
   @override
@@ -158,9 +176,9 @@ class _ProfileInfoState extends State<ProfileInfo> {
                           ),
                         ),
                         Text(
-                          _point == null || _point?.pop == null
+                          [null, 0].contains(_point.pop)
                               ? "-"
-                              : _point!.pop!.toString(),
+                              : _point.pop.toString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Color(0xFFDE5854),
@@ -203,32 +221,32 @@ class _ProfileInfoState extends State<ProfileInfo> {
                               ),
                             ),
                           ),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xE53DDFCE),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4)),
-                            ),
-                            child: const Text(
-                              '+',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                              ),
-                            ),
-                          )
+                          InkWell(
+                              onTap: widget.onPurchaseMint,
+                              child: Container(
+                                width: 24,
+                                height: 24,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xE53DDFCE),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                ),
+                                child: const Text(
+                                  '+',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                  ),
+                                ),
+                              ))
                         ],
                       ),
                       Text(
-                        _point == null || _point?.mint == 0
-                            ? "-"
-                            : _point!.mint.toString(),
+                        _point.mint == 0 ? "-" : _point.mint.toString(),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF3DDFCE),

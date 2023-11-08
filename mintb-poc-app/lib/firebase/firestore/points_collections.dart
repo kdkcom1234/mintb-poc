@@ -25,3 +25,7 @@ Future<PointCollection?> fetchPoints() async {
 
   return null;
 }
+
+Stream<DocumentSnapshot<Map<String, dynamic>>> getSnapshotPoints() {
+  return FirebaseFirestore.instance.doc('points/${getUid()}').snapshots();
+}

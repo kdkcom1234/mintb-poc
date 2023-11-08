@@ -6,7 +6,7 @@ import '../auth.dart';
 
 Future<String> createAuctionRequest() async {
   var collectionRef =
-      FirebaseFirestore.instance.collection("/auction-requests/");
+      FirebaseFirestore.instance.collection("/auction-requests");
   final docRef = await collectionRef
       .add({"profileId": getUid(), "createdAt": FieldValue.serverTimestamp()});
   final doc = await docRef.get();

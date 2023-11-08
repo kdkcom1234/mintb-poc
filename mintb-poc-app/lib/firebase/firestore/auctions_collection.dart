@@ -78,13 +78,6 @@ Future<void> createAuctionBid(String auctionId, int amount) async {
       .doc('/auctions/$auctionId/bid-requests/${getUid()}');
   await docRef
       .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
-
-  // // 클라이언트 사이드 로직 처리(POC용)
-  // await usePoints(amount);
-  // var docRef = FirebaseFirestore.instance
-  //     .doc('auctions/$auctionId/bids/${getUid()}');
-  // await docRef
-  //     .set({"amount": amount, "createdAt": FieldValue.serverTimestamp()});
 }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionRequestLive(

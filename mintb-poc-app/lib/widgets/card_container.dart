@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mintb_poc_app/screens/card/card_empty.dart';
 
-import '../constants.dart';
+import '../env.dart';
 import '../firebase/firestore/profiles_collection.dart';
 import 'text_chip.dart';
 
