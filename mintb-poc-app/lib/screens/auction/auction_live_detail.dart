@@ -902,162 +902,195 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
                                         ),
                                       )
                                     : const SizedBox.shrink(),
+                                bidsCount == 0
+                                    ? Center(
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 117,
+                                            ),
+                                            Image.asset(
+                                              "assets/none_icon.png",
+                                              width: 80,
+                                              height: 80,
+                                            ),
+                                            const SizedBox(
+                                              height: 30,
+                                            ),
+                                            const Text(
+                                              '아직 데이트를 입찰한 유저가 없습니다.',
+                                              style: TextStyle(
+                                                color: Color(0xFFB2BABB),
+                                                fontSize: 16,
+                                                fontFamily: 'Pretendard',
+                                                fontWeight: FontWeight.w600,
+                                                height: 0,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
                                 // 입찰 목록
-                                Expanded(
-                                    child: ListView.builder(
-                                        itemCount: status >= 1
-                                            ? bidsList.length - 1
-                                            : bidsList.length,
-                                        itemBuilder: (ctx, index) => Stack(
-                                              children: [
-                                                // 리스트 박스
-                                                Container(
-                                                  margin: index != 0
-                                                      ? const EdgeInsets.only(
-                                                          top: 16)
-                                                      : EdgeInsets.zero,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: 78,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 14),
-                                                  decoration: ShapeDecoration(
-                                                    color:
-                                                        const Color(0xFF1C1C26),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8)),
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            width: 50,
-                                                            height: 50,
-                                                            decoration:
-                                                                ShapeDecoration(
-                                                              image: profileList
-                                                                      .isNotEmpty
-                                                                  ? DecorationImage(
-                                                                      image: NetworkImage(profileList
-                                                                          .firstWhere((e) =>
-                                                                              e.id! ==
-                                                                              bidsList[status >= 1 ? index + 1 : index].id)
-                                                                          .images[0]),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    )
-                                                                  : null,
-                                                              shape:
-                                                                  const OvalBorder(),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 16,
-                                                          ),
-                                                          Text(
-                                                            profileList
-                                                                    .isNotEmpty
-                                                                ? profileList
-                                                                    .firstWhere((e) =>
-                                                                        e.id! ==
-                                                                        bidsList[status >= 1
-                                                                                ? index + 1
-                                                                                : index]
-                                                                            .id)
-                                                                    .nickname
-                                                                : "",
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Color(
-                                                                  0xFFD5DBDB),
-                                                              fontSize: 16,
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              height: 0,
-                                                            ),
-                                                          )
-                                                        ],
+                                bidsCount > 0
+                                    ? Expanded(
+                                        child: ListView.builder(
+                                            itemCount: status >= 1
+                                                ? bidsList.length - 1
+                                                : bidsList.length,
+                                            itemBuilder: (ctx, index) => Stack(
+                                                  children: [
+                                                    // 리스트 박스
+                                                    Container(
+                                                      margin: index != 0
+                                                          ? const EdgeInsets
+                                                              .only(top: 16)
+                                                          : EdgeInsets.zero,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 78,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 14),
+                                                      decoration:
+                                                          ShapeDecoration(
+                                                        color: const Color(
+                                                            0xFF1C1C26),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8)),
                                                       ),
-                                                      Row(
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            '${bidsList[status >= 1 ? index + 1 : index].amount} m',
-                                                            textAlign:
-                                                                TextAlign.right,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Color(
-                                                                  0xFF3EDFCF),
-                                                              fontSize: 16,
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              height: 0,
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                // 1순위 표시 마커
-                                                status == 0 && index == 0
-                                                    ? Positioned(
-                                                        top: 7,
-                                                        left: 7,
-                                                        child: Container(
-                                                            width: 22,
-                                                            height: 22,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    bottom: 1),
-                                                            decoration:
-                                                                const ShapeDecoration(
-                                                              color: Color(
-                                                                  0xFFFFB74D),
-                                                              shape:
-                                                                  OvalBorder(),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                '1st',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .right,
+                                                          Row(
+                                                            children: [
+                                                              Container(
+                                                                width: 50,
+                                                                height: 50,
+                                                                decoration:
+                                                                    ShapeDecoration(
+                                                                  image: profileList
+                                                                          .isNotEmpty
+                                                                      ? DecorationImage(
+                                                                          image: NetworkImage(profileList
+                                                                              .firstWhere((e) => e.id! == bidsList[status >= 1 ? index + 1 : index].id)
+                                                                              .images[0]),
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                        )
+                                                                      : null,
+                                                                  shape:
+                                                                      const OvalBorder(),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 16,
+                                                              ),
+                                                              Text(
+                                                                profileList
+                                                                        .isNotEmpty
+                                                                    ? profileList
+                                                                        .firstWhere((e) =>
+                                                                            e.id! ==
+                                                                            bidsList[status >= 1 ? index + 1 : index].id)
+                                                                        .nickname
+                                                                    : "",
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Color(
-                                                                      0xFF1C1C26),
-                                                                  fontSize: 10,
+                                                                      0xFFD5DBDB),
+                                                                  fontSize: 16,
                                                                   fontFamily:
                                                                       'Pretendard',
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .w400,
+                                                                          .w700,
                                                                   height: 0,
                                                                 ),
-                                                              ),
-                                                            )),
-                                                      )
-                                                    : const SizedBox.shrink()
-                                              ],
-                                            )))
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                '${bidsList[status >= 1 ? index + 1 : index].amount} m',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF3EDFCF),
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      'Pretendard',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  height: 0,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    // 1순위 표시 마커
+                                                    status == 0 && index == 0
+                                                        ? Positioned(
+                                                            top: 7,
+                                                            left: 7,
+                                                            child: Container(
+                                                                width: 22,
+                                                                height: 22,
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                            1),
+                                                                decoration:
+                                                                    const ShapeDecoration(
+                                                                  color: Color(
+                                                                      0xFFFFB74D),
+                                                                  shape:
+                                                                      OvalBorder(),
+                                                                ),
+                                                                child:
+                                                                    const Center(
+                                                                  child: Text(
+                                                                    '1st',
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .right,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xFF1C1C26),
+                                                                      fontSize:
+                                                                          10,
+                                                                      fontFamily:
+                                                                          'Pretendard',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      height: 0,
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                          )
+                                                        : const SizedBox
+                                                            .shrink()
+                                                  ],
+                                                )))
+                                    : const SizedBox.shrink()
                               ],
                             ),
                           ))),

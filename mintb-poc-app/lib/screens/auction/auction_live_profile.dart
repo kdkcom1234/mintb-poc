@@ -296,7 +296,7 @@ class _AuctionLiveProfileState extends State<AuctionLiveProfile> {
             ),
             onPressed: handleOpenAuctionDetail,
             child: const Text(
-              '경매 상세 보기',
+              '경매 현황 보기',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF3EDFCF),
