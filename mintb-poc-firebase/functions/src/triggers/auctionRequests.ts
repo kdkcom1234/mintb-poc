@@ -1,7 +1,7 @@
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import { DEFAULT_REGION } from "../env";
-import { db } from "..";
+import { db } from "../admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 export const auctionRequestsUpdated = onDocumentUpdated(

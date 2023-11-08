@@ -3,7 +3,7 @@ import * as logger from "firebase-functions/logger";
 import { DEFAULT_REGION } from "../env";
 
 import { FieldValue } from "firebase-admin/firestore";
-import { db } from "..";
+import { db } from "../admin";
 
 export const auctionBidRequestsCreated = onDocumentCreated(
   {
