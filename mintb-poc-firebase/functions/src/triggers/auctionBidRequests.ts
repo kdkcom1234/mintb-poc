@@ -58,6 +58,7 @@ export const auctionBidRequestsCreated = onDocumentCreated(
     const bidDocRef = db.doc(`/auctions/${auctionId}/bids/${uid}`);
     await bidDocRef.set({
       amount,
+      uid,
       createdAt: FieldValue.serverTimestamp(),
     });
 

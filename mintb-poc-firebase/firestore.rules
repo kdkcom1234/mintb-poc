@@ -64,6 +64,11 @@ service cloud.firestore {
       allow read: if request.auth != null;
     }
 
+    // 입찰정보 컬렉션 그룹에 대한 규칙을 설정합니다.
+    match /{path=**}/bids/{uid} {
+      allow read: if request.auth != null;
+    }
+
     // !! ===== 규칙이 없는 문서는 기본 접근 제한
     match /{document=**} {
       allow read, write: if false;

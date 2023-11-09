@@ -78,7 +78,7 @@ export const auctionStatusUpdated = onDocumentUpdated(
         const popCurrentScore =
           pointData["pop"] ? pointData["pop"] as number : 0;
         const mintCurrent =
-          pointData["min"] ? pointData["mint"] as number : 0;
+          pointData["mint"] ? pointData["mint"] as number : 0;
         await pointDocRef.set({
           pop: popCurrentScore + popAmount,
           mint: mintCurrent + maxBidAmount,
