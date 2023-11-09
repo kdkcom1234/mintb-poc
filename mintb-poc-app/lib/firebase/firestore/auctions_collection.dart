@@ -1,24 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mintb_poc_app/firebase/auth.dart';
+import 'package:mintb_poc_app/firebase/firestore/profiles_collection.dart';
 
 class AuctionCollection {
   String? id;
   final String profileId;
+  ProfileCollection? profile;
   Timestamp? duration;
   Timestamp? createdAt;
+  Timestamp? endedAt;
   bool isLive;
   bool? isConfirm;
+  List<AuctionBidCollection>? bids;
+  List<String>? views;
 
   AuctionCollection(this.profileId, this.duration, this.isLive,
-      {this.id, this.createdAt, this.isConfirm});
+      {this.id,
+      this.createdAt,
+      this.endedAt,
+      this.isConfirm,
+      this.bids,
+      this.views,
+      this.profile});
 }
 
 class AuctionBidCollection {
   final int amount;
   String id;
+  String? uid;
+  ProfileCollection? profile;
   Timestamp? createdAt;
 
-  AuctionBidCollection(this.amount, {required this.id, this.createdAt});
+  AuctionBidCollection(this.amount,
+      {required this.id, this.createdAt, this.uid, this.profile});
 }
 
 Future<List<AuctionCollection>> fetchAuctionLiveList() async {
@@ -40,7 +54,7 @@ Future<List<AuctionCollection>> fetchAuctionLiveList() async {
   return list;
 }
 
-Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionsLive() {
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctions() {
   var query = FirebaseFirestore.instance
       .collection('auctions')
       .orderBy("createdAt", descending: true);
@@ -103,10 +117,49 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotAuctionViews(
 
 Future<void> endAuction(String auctionId) async {
   var docRef = FirebaseFirestore.instance.doc('auctions/$auctionId');
-  await docRef.set({"status": 1, "isLive": false}, SetOptions(merge: true));
+  await docRef.set(
+      {"status": 1, "isLive": false, "endedAt": FieldValue.serverTimestamp()},
+      SetOptions(merge: true));
 }
 
 Future<void> requestAuctionRewards(String auctionId) async {
   var docRef = FirebaseFirestore.instance.doc('auctions/$auctionId');
   await docRef.set({"status": 2}, SetOptions(merge: true));
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotMyAuctions() {
+  var query = FirebaseFirestore.instance
+      .collection("auctions")
+      .where("profileId", isEqualTo: getUid())
+      .orderBy("createdAt", descending: true);
+  return query.snapshots();
+}
+
+Future<List<AuctionBidCollection>> fetchAuctionBids(String auctionId) async {
+  var collection = await FirebaseFirestore.instance
+      .collection('auctions/$auctionId/bids')
+      .orderBy("amount", descending: true)
+      .get();
+
+  return collection.docs
+      .map((e) => AuctionBidCollection(e.data()["amount"],
+          id: e.id, createdAt: e.data()["createdAt"]))
+      .toList();
+}
+
+Future<List<String>> fetchAuctionViews(String auctionId) async {
+  var collection = await FirebaseFirestore.instance
+      .collection('auctions/$auctionId/views')
+      .get();
+
+  return collection.docs.map((e) => e.id).toList();
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getSnapshotMyBids() {
+  // 'bids' 컬렉션 그룹에 대한 쿼리를 생성합니다.
+  return FirebaseFirestore.instance
+      .collectionGroup('bids')
+      .where("uid", isEqualTo: getUid())
+      .orderBy("createdAt", descending: true)
+      .snapshots();
 }

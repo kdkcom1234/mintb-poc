@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mintb_poc_app/screens/auction/auction_history.dart';
 import 'package:mintb_poc_app/screens/auction/auction_live.dart';
-import 'package:mintb_poc_app/screens/auction/auction_mybid.dart';
 import 'package:mintb_poc_app/screens/auction/auction_request.dart';
 
 class AuctionMain extends StatefulWidget {
@@ -13,9 +13,6 @@ class AuctionMain extends StatefulWidget {
 }
 
 class _AuctionMainState extends State<AuctionMain> {
-  var currentIndex = 0;
-  var refreshLiveCount = 0;
-
   void handleAuctionRequest() {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const AuctionRequest(),
@@ -23,9 +20,15 @@ class _AuctionMainState extends State<AuctionMain> {
     ));
   }
 
+  void handleAuctionHistory() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const AuctionHistory(),
+      fullscreenDialog: true,
+    ));
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -45,7 +48,7 @@ class _AuctionMainState extends State<AuctionMain> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: handleAuctionHistory,
                           child: Image.asset(
                             "assets/list_button.png",
                             width: 40,
@@ -84,12 +87,10 @@ class _AuctionMainState extends State<AuctionMain> {
                     ),
                   ),
                   /* -- 라이브 카드 페이지 --*/
-                  Expanded(
+                  const Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        currentIndex == 0 ? AuctionLive() : const AuctionMyBid()
-                      ],
+                      children: [AuctionLive()],
                     ),
                   )
                 ],

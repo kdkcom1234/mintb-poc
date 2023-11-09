@@ -62,15 +62,19 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
       if (data == null || data.isEmpty) {
         return;
       }
+
+      if (status != 0 && data["status"] == 3) {
+        displayRewardsDialog(data["pop"], data["mint"], data["mtb"]);
+      }
+
       if (data["status"] == null) {
-        status = 0;
+        setState(() {
+          status = 0;
+        });
       } else {
         setState(() {
           status = data["status"];
         });
-      }
-      if (status == 3) {
-        displayRewardsDialog(data["pop"], data["mint"], data["mtb"]);
       }
     });
   }
@@ -109,7 +113,9 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
           await fetchProfilesByIds(bidsList.map((e) => e.id!).toList());
       setState(() {
         profileList.clear();
-        for (final profile in profiles) {
+        for (final bid in bidsList) {
+          final profile =
+              profiles.firstWhere((element) => element.id == bid.id);
           profileList.add(profile);
         }
       });
@@ -515,6 +521,7 @@ class _AuctionLiveDetailState extends State<AuctionLiveDetail> {
 
   @override
   Widget build(BuildContext context) {
+    // log(profileList[1].nickname);
     return Scaffold(
         body: Container(
             color: const Color(0xFF1C1C26),

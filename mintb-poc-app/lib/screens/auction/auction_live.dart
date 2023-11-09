@@ -28,7 +28,7 @@ class _AuctionLiveState extends State<AuctionLive> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
       auctionLiveSubscription;
   void listenAuctionLive() {
-    auctionLiveSubscription = getSnapshotAuctionsLive().listen((event) {
+    auctionLiveSubscription = getSnapshotAuctions().listen((event) {
       final myAuction =
           event.docs.where((element) => element["profileId"] == getUid());
       // 내 경매가 추가/수정 되었음
